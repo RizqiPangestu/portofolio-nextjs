@@ -1,4 +1,5 @@
 import { excalibrawFont } from "../fonts/fonts"
+import Image from 'next/image'
 
 type GithubProject = {
     id: number,
@@ -39,7 +40,10 @@ function Description({description}:{description:string}){
 function RepoUrl({link}:{link: string}){
     return <div>
         <a href={link} target="_blank">
-            <img src="/assets/images/github_logo.svg" alt="" />
+            <Image
+                src={"/assets/images/github_logo.svg"}
+                alt=""
+            />
         </a>
     </div>
 }

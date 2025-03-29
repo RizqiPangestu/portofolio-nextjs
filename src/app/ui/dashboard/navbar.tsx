@@ -1,5 +1,3 @@
-import styles from '@/app/ui/dashboard/home.module.css';
-
 export default function NavBar(){
     return <>
         <nav className='flex gap-8'>

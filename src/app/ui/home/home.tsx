@@ -9,7 +9,7 @@ export function About(){
             About Me
         </div>
         <div className="my-2">
-            Hello, I'm Rizqi Pangestu, i have been working as software engineer since i graduated from bachelor degree.
+            Hello, I&#39;m Rizqi Pangestu, i have been working as software engineer since i graduated from bachelor degree.
             I have strong interests in software engineering. I like to learn something new by doing and read the official documentations
         </div>
     </div>
@@ -158,7 +158,7 @@ export function Skills(){
             Skills
         </div>
         <div className="my-2">
-            I've been working as software engineer mostly on backend technologies
+            I&#39;ve been working as software engineer mostly on backend technologies
         </div>
         <div className='flex flex-wrap justify-center my-2 bg-emerald-100 rounded-3xl border-emerald-700 border-5 outline-emerald-100 outline-3'>
             {imageList}

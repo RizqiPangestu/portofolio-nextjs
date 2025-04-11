@@ -43,6 +43,8 @@ function RepoUrl({link}:{link: string}){
             <Image
                 src={"/assets/images/github_logo.svg"}
                 alt=""
+                width={25}
+                height={25}
             />
         </a>
     </div>

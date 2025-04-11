@@ -20,7 +20,7 @@ export function Experience(){
         <div className={`${excalibrawFont.className} text-3xl font-bold`}>
             Experience
         </div>
-        <div className="flex flex-col items-start w-full my-4 text-lg">
+        <div className="flex flex-col items-start w-full my-4 text-base md:text-lg">
             <div className="w-full my-4">
                 <div className="flex flex-row gap-2">
                     <div className="font-bold">Tiket.com</div>
@@ -38,7 +38,7 @@ export function Experience(){
                         <div className="text-right">Oct 2022 - Present</div>
                     </div>
                 </div>
-                <ul className="pl-5 text-gray-400 list-disc marker:text-green-400 text-base">
+                <ul className="pl-5 text-gray-400 list-disc marker:text-green-400 text-sm md:text-base">
                     <li>Develop B2B backend service using Golang</li>
                     <li>Using MongoDB, Redis, Kafka, GCP Pubsub, and Google Cloud Storage as tech stack</li>
                     <li>Create scalable job worker using Google PubSub messaging system (~3k concurrent job/minute)</li>
@@ -59,7 +59,7 @@ export function Experience(){
                         <div className="text-right">Oct 2021 - Mar 2022</div>
                     </div>
                 </div>
-                <ul className="pl-5 text-gray-400 list-disc marker:text-green-400 text-base">
+                <ul className="pl-5 text-gray-400 list-disc marker:text-green-400 text-sm md:text-base">
                     <li>Create feature request from client using Node js</li>
                     <li>Maintain the REST API from bug using Axios</li>
                     <li>Structuring database to ORM models using Sequelize</li>
@@ -75,9 +75,9 @@ export function Education(){
         <div className={`${excalibrawFont.className} text-3xl font-bold`}>
             Education
         </div>
-        <div className="flex flex-col items-start w-full my-4 text-lg">
+        <div className="flex flex-col items-start w-full my-4 text-sm md:text-lg">
             <div className="flex flex-row justify-between w-full">
-                <div className="flex flex-row gap-2">
+                <div className="flex flex-row">
                     <div className="font-bold">Universitas Gadjah Mada</div>
                     <div className="text-gray-500 font-bold">-</div>
                     <div className="text-gray-500 font-bold">Yogyakarta, Indonesia</div>
@@ -94,28 +94,28 @@ export function Skills(){
         {
             key: 1,
             title: "Golang",
-            path: "/assets/images/golang_img.png",
+            path: "https://go.dev/blog/go-brand/Go-Logo/PNG/Go-Logo_Blue.png",
             alt: "golang image",
             href: "https://go.dev/doc/"
         },
         {
             key: 2,
             title: "Mongodb",
-            path: "/assets/images/mongodb_img.png",
+            path: "https://webimages.mongodb.com/_com_assets/cms/kuyjf3vea2hg34taa-horizontal_default_slate_blue.svg",
             alt: "mongodb image",
             href: "https://www.mongodb.com/docs/"
         },
         {
             key: 3,
             title: "Redis",
-            path: "/assets/images/redis_img.png",
+            path: "https://redis.io/wp-content/uploads/2024/04/Logotype.svg?auto=webp&quality=85,75&width=120",
             alt: "redis image",
             href: "https://redis.io/docs/latest/"
         },
         {
             key: 4,
             title: "Apache Kafka",
-            path: "/assets/images/kafka_img.png",
+            path: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Apache_Kafka_logo.svg/308px-Apache_Kafka_logo.svg.png",
             alt: "kafka image",
             href: "https://kafka.apache.org/documentation/"
         },
@@ -141,7 +141,7 @@ export function Skills(){
             <a key={i.key} 
             href={i.href}
             target="_blank"
-            className="basis-1/2 lg:basis-1/4 relative w-32 h-32 mx-2 group transition-transform transform hover:scale-120 drop-shadow-lg contrast-125 grayscale-25">
+            className="basis-1/4 w-8 h-8 md:w-32 md:h-32 relative mx-2 my-2 group transition-transform transform hover:scale-120 drop-shadow-lg contrast-125 grayscale-25">
                 <Image
                     title={i.title}
                     src={i.path}
@@ -153,7 +153,7 @@ export function Skills(){
         )
     })
 
-    return <div className="flex flex-col items-center text-center my-8">
+    return <div className="flex flex-col items-center text-center my-8 w-full">
         <div className={`${excalibrawFont.className} text-3xl font-bold`}>
             Skills
         </div>
@@ -168,7 +168,7 @@ export function Skills(){
 
 export default function Home(){
     return <div className="w-full flex flex-col items-center">
-            <div className="w-1/2 flex flex-col items-center">
+            <div className="w-3/4 md:w-1/2 flex flex-col items-center">
             <About></About>
             <Experience></Experience>
             <Education></Education>

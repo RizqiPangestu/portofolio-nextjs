@@ -1,3 +1,4 @@
+import Footer from "@/app/ui/dashboard/footer";
 import Header from "@/app/ui/dashboard/header";
 import { inter } from "@/app/ui/fonts/fonts";
 import Project from "@/app/ui/project/project";
@@ -8,5 +9,6 @@ export default function Page(){
     <div className={inter.className}>
         <Project></Project>
     </div>
+    <Footer></Footer>
 </div>
 }

@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useRef, useEffect, use } from 'react';
 import { renderDiffLine } from './fast-diff';
 import { Result } from './text-compare';
 

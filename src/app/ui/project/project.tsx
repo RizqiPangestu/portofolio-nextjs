@@ -6,6 +6,7 @@ type GithubProject = {
     title: string,
     description: string,
     repoUrl: string,
+    website?: string,
 }
 
 const githubProjects: GithubProject[] = [
@@ -13,13 +14,20 @@ const githubProjects: GithubProject[] = [
         id: 1,
         title: "Portfolio",
         description: "The project to create this portfolio page",
-        repoUrl: "https://github.com/RizqiPangestu/portofolio-nextjs"
+        repoUrl: "https://github.com/RizqiPangestu/portofolio-nextjs",
     },
     {
         id: 2,
         title: "Arc Welding Defect Segmentation",
         description: "Final thesis project for my bachelor degree about arc welding defect segmentation using real-time video",
         repoUrl: "https://github.com/RizqiPangestu/Skripsi-Computer-Vision"
+    },
+    {
+        id: 3,
+        title: "Text Compare",
+        description: "Tools to compare two text and highlighting the position of the different characters. Currently it supports for plain-text and key-value format",
+        repoUrl: "https://github.com/RizqiPangestu/portofolio-nextjs",
+        website: "https://rizqipangestu.com/text-compare"
     }
 ];
 
@@ -50,6 +58,19 @@ function RepoUrl({link}:{link: string}){
     </div>
 }
 
+function WebsiteUrl({link}:{link: string}){
+    return <div>
+        <a href={link} target="_blank">
+            <Image
+                src={"/assets/images/website.png"}
+                alt=""
+                width={25}
+                height={25}
+            />
+        </a>
+    </div>
+}
+
 function Card({githubProjects}:{githubProjects: GithubProject[]}){
     return <div className="flex flex-col gap-8">
         {githubProjects.map((project) => (
@@ -57,7 +78,10 @@ function Card({githubProjects}:{githubProjects: GithubProject[]}){
                 <div key={project.id}>
                     <Title title={project.title}></Title>
                     <Description description={project.description}></Description>
-                    <RepoUrl link={project.repoUrl}></RepoUrl>
+                    <div className="flex flex-row gap-4">
+                        <RepoUrl link={project.repoUrl}></RepoUrl>
+                        {project.website && <WebsiteUrl link={project.website}></WebsiteUrl>}
+                    </div>
                 </div>
             </div>
             ))}

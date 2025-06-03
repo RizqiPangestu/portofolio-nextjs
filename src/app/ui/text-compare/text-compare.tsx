@@ -31,7 +31,7 @@ type Button = {
     onClear: (React.MouseEventHandler<HTMLButtonElement>)
 }
 
-function CompareButton({onCompare,showResult,compareResult,onClear}:Button){
+function CompareButton({onCompare,showResult,onClear}:Button){
     return <div className='flex flex-col min-h-[100px] min-w-[100px] gap-5 items-center'>
         <button className="border-1 w-full text-center bg-green-700 hover:bg-green-900 active:bg-green-700 transition-colors font-bold py-2 px-4 rounded" onClick={onCompare}>
             Compare

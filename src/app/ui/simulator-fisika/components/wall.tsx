@@ -1,3 +1,13 @@
-export default function Wall(){
-    return <div className="bg-gray-300 w-6 rounded-md shadow-sm shadow-gray-700 z-[1]" ></div>
+type WallProps = {
+    height: number; // height in pixels
+};
+
+export default function Wall({ height }: WallProps) {
+    return (
+        <div
+            className="bg-gray-400 shadow-gray-800 shadow-sm rounded-md w-6 z-[1]"
+            style={{ height: `${height}px` }}
+        >
+        </div>
+    );
 }

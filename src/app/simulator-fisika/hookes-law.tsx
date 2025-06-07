@@ -3,7 +3,7 @@
 import PullArrowSVG from "../ui/simulator-fisika/components/PullArrowSVG";
 import SpringSVG from "../ui/simulator-fisika/components/SpringSVG";
 import Wall from "../ui/simulator-fisika/components/wall";
-import { use, useEffect, useState } from "react";
+import {useEffect, useState } from "react";
 import BulkyArrow from "../ui/simulator-fisika/components/Arrow";
 
 type SpringSliderProps = {

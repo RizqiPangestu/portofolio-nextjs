@@ -1,6 +1,5 @@
 "use client"
 
-import Wall from "../ui/simulator-fisika/components/wall";
 import HookesLaw, { HookesLawParallel } from "./hookes-law";
 
 export default function SimulatorFisika(){

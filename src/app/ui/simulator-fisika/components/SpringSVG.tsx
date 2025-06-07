@@ -26,7 +26,7 @@ const SpringSVG: React.FC<SpringSVGProps> = ({
   const endX = width;
   const endY = height / 2 + Math.sin(endX * frequency) * amplitude;
 
-  let springElement: React.ReactElement[] = [];
+  const springElement: React.ReactElement[] = [];
   let color: string = "#007F00"
   let isFront: boolean = false;
   let previousY: number = 0

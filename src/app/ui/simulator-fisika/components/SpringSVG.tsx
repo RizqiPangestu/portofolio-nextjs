@@ -1,3 +1,5 @@
+"use client"
+
 import React from 'react';
 
 interface SpringSVGProps {
@@ -19,13 +21,65 @@ const SpringSVG: React.FC<SpringSVGProps> = ({
   const amplitude = height / 2.5;
   const frequency = (2 * Math.PI * coils) / width;
 
+  const startX = 0;
+  const startY = height / 2 + Math.sin(startX * frequency) * amplitude;
+  const endX = width;
+  const endY = height / 2 + Math.sin(endX * frequency) * amplitude;
+
+  const springElement: React.ReactElement[] = [];
+  let color: string = "#007F00"
+  let isFront: boolean = false;
+  let previousY: number = 0
+  let previousX: number = 0
+
+  const frontSpringElements: React.ReactElement[] = [];
+  const backSpringElements: React.ReactElement[] = [];
   for (let x = 0; x <= width; x += 2) {
     const y = height / 2 + Math.sin(x * frequency) * amplitude;
+    if (isFront){
+      color = "#04FF04" // terang
+    }else{
+      color = "#007F00"
+    }
+    
+    if (isFront && y>previousY){
+      points.push(`${x},${y}`);
+      frontSpringElements.push(<polyline
+        key={x}
+        fill="none"
+        // stroke={strokeColor}
+        stroke={color}
+        strokeWidth={strokeWidth}
+        strokeLinejoin="round"
+        points={points.join(' ')}
+        className='drop-shadow-[0px_0px_4px_#DDDDDD]'
+      />)
+      points = [`${previousX},${previousY}`]
+      isFront = !isFront
+    }else if (!isFront && y<=previousY+2){
+      points.push(`${x},${y}`);
+      backSpringElements.push(<polyline
+        key={x}
+        fill="none"
+        // stroke={strokeColor}
+        stroke={color}
+        strokeWidth={strokeWidth}
+        strokeLinejoin="round"
+        points={points.join(' ')}
+        className='drop-shadow-[0px_1px_2px_#666666]'
+      />)
+      points = [`${previousX},${previousY}`]
+      isFront = !isFront
+    }
+
     points.push(`${x},${y}`);
+    previousY = y
+    previousX = x
   }
 
+  
   const fixedEndY = height / 2; // fixed Y for the end point
-
+  
   // Adjust last point's Y coordinate
   points = points.map((point, index) => {
     if (index === points.length - 1) {
@@ -35,15 +89,15 @@ const SpringSVG: React.FC<SpringSVGProps> = ({
     return point;
   });
 
-  // Parse start point
-  const [startXStr, startYStr] = points[0].split(',');
-  const startX = Number(startXStr);
-  const startY = Number(startYStr);
-
-  // Parse end point
-  const [endXStr, endYStr] = points[points.length - 1].split(',');
-  const endX = Number(endXStr);
-  const endY = Number(endYStr);
+  springElement.push(<polyline
+    key={-1}
+    fill="none"
+    stroke={color}
+    strokeWidth={strokeWidth}
+    strokeLinejoin="round"
+    points={points.join(' ')}
+    style={{ filter: 'drop-shadow(0 1px 1px #333)' }}
+  />,...backSpringElements, ...frontSpringElements);
 
   const lineLength = 20; // adjust as needed
   return (
@@ -61,14 +115,7 @@ const SpringSVG: React.FC<SpringSVGProps> = ({
       />
 
       {/* The sine wave polyline */}
-      <polyline
-        fill="none"
-        stroke={strokeColor}
-        strokeWidth={strokeWidth}
-        strokeLinejoin="round"
-        points={points.join(' ')}
-        style={{ filter: 'drop-shadow(0 1px 1px #333)' }}
-      />
+      {springElement}
 
       {/* Straight line at the end */}
       <line

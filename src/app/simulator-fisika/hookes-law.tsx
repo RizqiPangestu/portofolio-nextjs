@@ -8,7 +8,7 @@ import BulkyArrow from "../ui/simulator-fisika/components/Arrow";
 
 type SpringSliderProps = {
   setValue: (value: number) => void;
-  value: number
+  value: number 
   minConst: number
   maxConst: number
 }
@@ -149,10 +149,24 @@ export default function HookesLaw({width,height,coils}:HookesLawProps){
             )}
           </div>
         </div>
-        <SpringSVG width={width+(distance*200)} height={height} coils={coils} strokeColor="#0070f3" strokeWidth={springConstant / 100} />
-        <div className="absolute" 
-          style={{ width: `${width+30 + 12}px`, height: `${height}px` }}>
-          <div className="absolute right-0 border-l-1 border-dashed h-full border-green-500"></div>
+        <div className="flex flex-row w-full h-full items-center">
+          <SpringSVG width={width+(distance*200)} height={height} coils={coils} strokeColor="#0070f3" strokeWidth={springConstant / 100} />
+        </div>
+        <div className="absolute h-full"  style={{ width: `${width+40}px` }}>
+          <div className="flex flex-row items-center justify-end h-full w-full">
+            <div className="right-0 border-l-2 border-dashed h-3/5 border-green-500"></div>
+            <div className="absolute flex flex-col right-0 bottom-0" 
+              style={{ transform: `translateX(${width+40}px)`, width: `${width+40}px` }}>
+              {(forceConstant != 0) ? (
+                <div className="" >
+                  <BulkyArrow direction="right" color="#0070f3" height={25} headWidth={20} shaftWidth={10} shaftLength={15+forceConstant}/>
+                  <p className="text-sm">D = {distance.toFixed(3)} m</p>
+                </div>
+              ):(
+                <p className="text text-sm">D = 0 m</p>
+              )}
+            </div>
+          </div>
         </div>
       </div>
       <div className="flex flex-col h-full w-full justify-center relative">
@@ -164,17 +178,6 @@ export default function HookesLaw({width,height,coils}:HookesLawProps){
         </div>
         <PullArrowSVG height={height} translateX={forceConstant}></PullArrowSVG>
       </div>
-      <div className="absolute bottom-0"
-        style={{ left: `${width+30+25}px`}}>
-          {(forceConstant != 0) ? (
-            <div>
-              <BulkyArrow direction="right" color="#0070f3" height={25} headWidth={20} shaftWidth={10} shaftLength={15+forceConstant}/>
-              <p className="text-center text-sm">D = {distance.toFixed(3)} m</p>
-            </div>
-          ):(
-            <p className="text-center text-sm">D = 0 m</p>
-          )}
-        </div>
     </div>
     
     <div className="flex flex-row gap-4 p-4">
@@ -236,9 +239,21 @@ export function HookesLawParallel({width,height,coils}:HookesLawProps){
         <SpringSVG width={width+(distance*200)} height={height} coils={coils} strokeColor="#0070f3" strokeWidth={springConstant2 / 100} />
       </div>
       <div className="absolute right-0 border-4 h-full border-black translate-x-1/2 z-[1]" style={{height: `${height*2}px` }}></div>
-      <div className="absolute" 
-        style={{ width: `${width+30 + 12}px`, height: `${height*2.5}px` }}>
-        <div className="absolute right-0 border-l-1 border-dashed h-full border-green-500"></div>
+      <div className="absolute h-3/4"  style={{ width: `${width+40}px` }}>
+        <div className="flex flex-row items-center justify-end h-full w-full">
+          <div className="right-0 border-l-2 border-dashed h-3/5 border-green-500"></div>
+          <div className="absolute flex flex-col right-0 bottom-0" 
+            style={{ transform: `translateX(${width+40}px)`, width: `${width+40}px` }}>
+            {(forceConstant != 0) ? (
+              <div className="" >
+                <BulkyArrow direction="right" color="#0070f3" height={25} headWidth={20} shaftWidth={10} shaftLength={15+forceConstant}/>
+                <p className="text-sm">D = {distance.toFixed(3)} m</p>
+              </div>
+            ):(
+              <p className="text text-sm">D = 0 m</p>
+            )}
+          </div>
+        </div>
       </div>
     </div>
     <div className="flex flex-col h-full w-full justify-center relative">
@@ -250,17 +265,6 @@ export function HookesLawParallel({width,height,coils}:HookesLawProps){
       </div>
       <PullArrowSVG height={height} translateX={forceConstant}></PullArrowSVG>
     </div>
-    <div className="absolute bottom-15"
-      style={{ left: `${width+30+25}px`}}>
-        {(forceConstant != 0) ? (
-          <div>
-            <BulkyArrow direction="right" color="#0070f3" height={25} headWidth={20} shaftWidth={10} shaftLength={15+forceConstant}/>
-            <p className="text-center text-sm">D = {distance.toFixed(3)} m</p>
-          </div>
-        ):(
-          <p className="text-center text-sm">D = 0 m</p>
-        )}
-      </div>
   </div>
   
   <div className="flex flex-row gap-4 p-4 items-center">
@@ -324,9 +328,21 @@ export function HookesLawSeries({width,height,coils}:HookesLawProps){
         <SpringSVG width={width+(distance*200)} height={height} coils={coils} strokeColor="#0070f3" strokeWidth={springConstant1 / 100} />
         <SpringSVG width={width+(distance*200)} height={height} coils={coils} strokeColor="#0070f3" strokeWidth={springConstant2 / 100} />
       </div>
-      <div className="absolute" 
-        style={{ width: `${2*(width+30+12)}px`, height: `${height}px` }}>
-        <div className="absolute right-0 border-l-1 border-dashed h-full border-green-500"></div>
+      <div className="absolute h-full"  style={{ width: `${2*(width+40)}px` }}>
+        <div className="flex flex-row items-center justify-end h-full w-full">
+          <div className="right-0 border-l-2 border-dashed h-3/5 border-green-500"></div>
+          <div className="absolute flex flex-col right-0 bottom-0" 
+            style={{ transform: `translateX(${width+40}px)`, width: `${width+40}px` }}>
+            {(forceConstant != 0) ? (
+              <div className="" >
+                <BulkyArrow direction="right" color="#0070f3" height={25} headWidth={20} shaftWidth={10} shaftLength={15+forceConstant}/>
+                <p className="text-sm">D = {distance.toFixed(3)} m</p>
+              </div>
+            ):(
+              <p className="text text-sm">D = 0 m</p>
+            )}
+          </div>
+        </div>
       </div>
     </div>
     <div className="flex flex-col h-full w-full justify-center relative">
@@ -338,17 +354,6 @@ export function HookesLawSeries({width,height,coils}:HookesLawProps){
       </div>
       <PullArrowSVG height={height} translateX={forceConstant}></PullArrowSVG>
     </div>
-    <div className="absolute bottom-0"
-      style={{ left: `${2*(width+30+15)}px`}}>
-        {(forceConstant != 0) ? (
-          <div>
-            <BulkyArrow direction="right" color="#0070f3" height={25} headWidth={20} shaftWidth={10} shaftLength={15+forceConstant}/>
-            <p className="text-center text-sm">D = {distance.toFixed(3)} m</p>
-          </div>
-        ):(
-          <p className="text-center text-sm">D = 0 m</p>
-        )}
-      </div>
   </div>
   
   <div className="flex flex-row gap-4 p-4 items-center">

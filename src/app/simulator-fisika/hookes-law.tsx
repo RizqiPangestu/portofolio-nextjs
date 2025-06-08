@@ -135,7 +135,9 @@ export default function HookesLaw({width,height,coils}:HookesLawProps){
 
     return <div className="w-full relative">
     <div className={`flex flex-row items-center relative`} style={{ height: `${2.5*height}px` }}> 
-      <Wall height={height*2}></Wall>
+      <div className="relative left-0 z-[1]">
+        <Wall height={height*2}></Wall>
+      </div>
       <div className="flex flex-col h-full justify-center relative">
         <div className="absolute top-0 right-0">
           <div className="flex flex-col">
@@ -199,7 +201,9 @@ export function HookesLawParallel({width,height,coils}:HookesLawProps){
 
   return <div className="w-full relative">
   <div className={`flex flex-row items-center relative`} style={{ height: `${5*height}px` }}> 
-    <Wall height={height*4.5}></Wall>
+    <div className="relative left-0 z-[1]">
+      <Wall height={height*4.5}></Wall>
+    </div>
     <div className="flex flex-col h-full justify-center relative">
       <div className="absolute top-0 right-0 flex flex-col">
         <div>
@@ -248,6 +252,94 @@ export function HookesLawParallel({width,height,coils}:HookesLawProps){
     </div>
     <div className="absolute bottom-15"
       style={{ left: `${width+30+25}px`}}>
+        {(forceConstant != 0) ? (
+          <div>
+            <BulkyArrow direction="right" color="#0070f3" height={25} headWidth={20} shaftWidth={10} shaftLength={15+forceConstant}/>
+            <p className="text-center text-sm">D = {distance.toFixed(3)} m</p>
+          </div>
+        ):(
+          <p className="text-center text-sm">D = 0 m</p>
+        )}
+      </div>
+  </div>
+  
+  <div className="flex flex-row gap-4 p-4 items-center">
+    <div className="flex flex-col gap-4">
+      <SpringSlider value={springConstant1} setValue={setSpringConstant1} minConst={200} maxConst={600}></SpringSlider>
+      <SpringSlider value={springConstant2} setValue={setSpringConstant2} minConst={200} maxConst={600}></SpringSlider>
+    </div>
+    <ForceSlider value={forceConstant} setValue={setForceConstant}></ForceSlider>
+  </div>
+</div>
+}
+
+export function HookesLawSeries({width,height,coils}:HookesLawProps){
+  const [springConstant1,setSpringConstant1] = useState<number>(200)
+  const [springConstant2,setSpringConstant2] = useState<number>(200)
+  const [forceConstant,setForceConstant] = useState<number>(0)
+  const [distance,setDistance] = useState<number>(0)
+
+  useEffect(() => {
+    const distance1 = forceConstant / springConstant1;
+    const distance2 = forceConstant / springConstant2
+    setDistance(distance1+distance2);
+  }, [forceConstant, springConstant1, springConstant2]);
+
+  return <div className="w-full relative">
+  <div className={`flex flex-row items-center relative`} style={{ height: `${2.5*height}px` }}> 
+    <div className="relative left-0 z-[1]">
+      <Wall height={height*2}></Wall>
+    </div>
+    <div className="flex flex-col h-full justify-center relative">
+      <div className="absolute top-0 right-0 flex flex-col">
+        <div>
+          {(forceConstant != 0) ? (
+            <div className="flex flex-col">
+              <p className="text-center text-sm">F2 = {forceConstant} N</p>
+              <div className="self-end">
+                <BulkyArrow direction="left" color="#007F00" height={25} headWidth={20} shaftWidth={10} shaftLength={15+forceConstant}/>
+              </div>
+            </div>
+          ) : (
+            <p className="text-center text-sm">F1 = 0 N</p>
+          )}
+        </div>
+      </div>
+      <div className="flex flex-row h-full items-center">
+      {/* style={{ transform: `translateX(${width}px)` }} */}
+        <div className="flex flex-row w-full absolute top-0 justify-center">
+          <div className="">
+            <p className="text-center text-sm">F1 = {forceConstant} N</p>
+            {(forceConstant != 0) && (
+              <BulkyArrow direction="left" color="#F070f3" height={25} headWidth={20} shaftWidth={10} shaftLength={15+forceConstant}/>
+            )}
+          </div>
+          <div className="">
+            <p className="text-center text-sm">F2 = {forceConstant} N</p>
+            {(forceConstant != 0) && (
+              <BulkyArrow direction="right" color="#007F00" height={25} headWidth={20} shaftWidth={10} shaftLength={15+forceConstant}/>
+            )}
+          </div>
+        </div>
+        <SpringSVG width={width+(distance*200)} height={height} coils={coils} strokeColor="#0070f3" strokeWidth={springConstant1 / 100} />
+        <SpringSVG width={width+(distance*200)} height={height} coils={coils} strokeColor="#0070f3" strokeWidth={springConstant2 / 100} />
+      </div>
+      <div className="absolute" 
+        style={{ width: `${2*(width+30+12)}px`, height: `${height}px` }}>
+        <div className="absolute right-0 border-l-1 border-dashed h-full border-green-500"></div>
+      </div>
+    </div>
+    <div className="flex flex-col h-full w-full justify-center relative">
+      <div className="absolute top-0">
+        <p className="text-center text-sm">F = {forceConstant} N</p>
+        {(forceConstant != 0) && (
+          <BulkyArrow direction="right" color="#0070f3" height={25} headWidth={20} shaftWidth={10} shaftLength={15+forceConstant}/>
+        )}
+      </div>
+      <PullArrowSVG height={height} translateX={forceConstant}></PullArrowSVG>
+    </div>
+    <div className="absolute bottom-0"
+      style={{ left: `${2*(width+30+15)}px`}}>
         {(forceConstant != 0) ? (
           <div>
             <BulkyArrow direction="right" color="#0070f3" height={25} headWidth={20} shaftWidth={10} shaftLength={15+forceConstant}/>

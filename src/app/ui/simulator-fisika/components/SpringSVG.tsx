@@ -56,7 +56,7 @@ const SpringSVG: React.FC<SpringSVGProps> = ({
       />)
       points = [`${previousX},${previousY}`]
       isFront = !isFront
-    }else if (!isFront && y<=previousY+2){
+    }else if (!isFront && y<=previousY){
       points.push(`${x},${y}`);
       backSpringElements.push(<polyline
         key={x}

@@ -2,9 +2,11 @@
 
 import PullArrowSVG from "../ui/simulator-fisika/components/PullArrowSVG";
 import SpringSVG from "../ui/simulator-fisika/components/SpringSVG";
-import Wall from "../ui/simulator-fisika/components/wall";
 import {useEffect, useState } from "react";
 import BulkyArrow from "../ui/simulator-fisika/components/Arrow";
+import ParabolaGraph from "../ui/simulator-fisika/components/Parabola";
+import Wall from "../ui/simulator-fisika/components/Wall";
+import EnergyBar from "../ui/simulator-fisika/components/EnergyBar";
 
 type SliderProps = {
   setValue: (value: number) => void;
@@ -374,76 +376,96 @@ export function HookesLawEnergy({width,height,coils}:HookesLawProps){
   const [springConstant,setSpringConstant] = useState<number>(200)
   const [forceConstant,setForceConstant] = useState<number>(0)
   const [distance,setDistance] = useState<number>(0)
+  const [energyPotential,setEnergyPotential] = useState<number>(0)
 
   useEffect(() => {
     setForceConstant(springConstant * distance)
+    setEnergyPotential(1/2 * springConstant * distance * distance)
   }, [distance, springConstant]);
 
-  return <div className="w-full relative">
-  <div className={`flex flex-row items-center relative`} style={{ height: `${2.5*height}px` }}> 
-    <div className="relative left-0 z-[1]">
-      <Wall height={height*2}></Wall>
+  return <div className="w-full h-full flex flex-col relative gap-4">
+  <div className="flex flex-row">
+    <div className="absolute" style={{ height: `${width/2}px`, width: `${width/2}px`}}>
+      <EnergyBar barValue={energyPotential}></EnergyBar>
     </div>
-    <div className="flex flex-col h-full justify-center relative">
-      <div className="absolute top-0 right-0">
-        <div className="flex flex-col">
-          <p className="text-center text-sm">F = {forceConstant.toFixed(1)} N</p>
-          {(forceConstant != 0) && (
-            <div className="self-end">
-              <BulkyArrow direction="left" color="#007F00" height={25} headWidth={20} shaftWidth={10} shaftLength={15+forceConstant}/>
-            </div>
-          )}
-        </div>
+    <div className="w-full">
+      <ParabolaGraph 
+      width={width} 
+      height={width} 
+      scale={10} 
+      a={springConstant/2000}
+      xBall={distance*10}
+      xBallValue={distance}
+      yBallValue={energyPotential}
+      />
+    </div>
+  </div>
+  <div className="flex flex-col">
+    <div className={`flex flex-row items-center relative`} style={{ height: `${2.5*height}px` }}> 
+      <div className="relative left-0 z-[1]">
+        <Wall height={height*2}></Wall>
       </div>
-      <div className="flex flex-row w-full h-full items-center">
-        <SpringSVG width={width+(distance*200)} height={height} coils={coils} strokeColor="#0070f3" strokeWidth={springConstant / 100} />
-      </div>
-      <div className="absolute h-full"  style={{ width: `${width+40}px` }}>
-        <div className="flex flex-row items-center justify-end h-full w-full">
-          <div className="right-0 border-l-2 border-dashed h-3/5 border-green-500"></div>
-          <div className="absolute flex flex-col right-0 bottom-0" 
-            style={{ transform: `translateX(${width+40}px)`, width: `${width+40}px` }}>
-            {(forceConstant != 0) ? (
-              <div className="" >
-                <BulkyArrow direction="right" color="#0070f3" height={25} headWidth={20} shaftWidth={10} shaftLength={distance*200}/>
-                <p className="text-sm">D = {distance.toFixed(3)} m</p>
+      <div className="flex flex-col h-full justify-center relative">
+        <div className="absolute top-0 right-0">
+          <div className="flex flex-col">
+            <p className="text-center text-sm">F = {forceConstant.toFixed(1)} N</p>
+            {(forceConstant != 0) && (
+              <div className="self-end">
+                <BulkyArrow direction="left" color="#007F00" height={25} headWidth={20} shaftWidth={10} shaftLength={Math.abs(forceConstant)/2}/>
               </div>
-            ):(
-              <p className="text text-sm">D = 0 m</p>
             )}
           </div>
         </div>
+        <div className="flex flex-row w-full h-full items-center">
+          <SpringSVG width={width+(distance*200)} height={height} coils={coils} strokeColor="#0070f3" strokeWidth={springConstant / 100} />
+        </div>
+        <div className="absolute h-full"  style={{ width: `${width+40}px` }}>
+          <div className="flex flex-row items-center justify-end h-full w-full">
+            <div className="right-0 border-l-2 border-dashed h-3/5 border-green-500"></div>
+            <div className="absolute flex flex-col right-0 bottom-0" 
+              style={{ transform: `translateX(${width+40}px)`, width: `${width+40}px` }}>
+              {(forceConstant != 0) ? (
+                <div className="" >
+                  <BulkyArrow direction="right" color="#0070f3" height={25} headWidth={20} shaftWidth={10} shaftLength={distance*200}/>
+                  <p className="text-sm">D = {distance.toFixed(3)} m</p>
+                </div>
+              ):(
+                <p className="text text-sm">D = 0 m</p>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="flex flex-col h-full w-full justify-center relative">
+        <div className="absolute top-0">
+          <p className="text-center text-sm">F = {forceConstant.toFixed(1)} N</p>
+          {(forceConstant != 0) && (
+            <BulkyArrow direction="right" color="#0070f3" height={25} headWidth={20} shaftWidth={10} shaftLength={Math.abs(forceConstant)/2}/>
+          )}
+        </div>
+        <PullArrowSVG height={height} translateX={forceConstant}></PullArrowSVG>
       </div>
     </div>
-    <div className="flex flex-col h-full w-full justify-center relative">
-      <div className="absolute top-0">
-        <p className="text-center text-sm">F = {forceConstant.toFixed(1)} N</p>
-        {(forceConstant != 0) && (
-          <BulkyArrow direction="right" color="#0070f3" height={25} headWidth={20} shaftWidth={10} shaftLength={15+forceConstant}/>
-        )}
-      </div>
-      <PullArrowSVG height={height} translateX={forceConstant}></PullArrowSVG>
-    </div>
-  </div>
-  
-  <div className="flex flex-row gap-4 p-4">
-  <Slider 
-        value={springConstant} 
-        setValue={setSpringConstant} 
-        min={100}
-        max={400} 
-        step={10} 
-        text="Spring Constant"
-        unit="N/m"/>
+    
+    <div className="flex flex-row gap-4 p-4">
     <Slider 
-        value={distance} 
-        setValue={setDistance} 
-        min={0}
-        max={1} 
-        step={0.05} 
-        text="Displacement"
-        unit="m"
-        toFixed={3}/>
+          value={springConstant} 
+          setValue={setSpringConstant} 
+          min={100}
+          max={400} 
+          step={10} 
+          text="Spring Constant"
+          unit="N/m"/>
+      <Slider 
+          value={distance} 
+          setValue={setDistance} 
+          min={0}
+          max={1} 
+          step={0.05} 
+          text="Displacement"
+          unit="m"
+          toFixed={3}/>
+    </div>
   </div>
 </div>
 }

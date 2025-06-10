@@ -5,8 +5,8 @@ import SpringSVG from "../ui/simulator-fisika/components/SpringSVG";
 import {useEffect, useState } from "react";
 import BulkyArrow from "../ui/simulator-fisika/components/Arrow";
 import ParabolaGraph from "../ui/simulator-fisika/components/Parabola";
-import Wall from "../ui/simulator-fisika/components/Wall";
 import EnergyBar from "../ui/simulator-fisika/components/EnergyBar";
+import Wall from "../ui/simulator-fisika/components/Wall";
 
 type SliderProps = {
   setValue: (value: number) => void;

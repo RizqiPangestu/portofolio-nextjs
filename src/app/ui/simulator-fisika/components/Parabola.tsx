@@ -1,13 +1,4 @@
-import BulkyArrow from "./Arrow";
 import SvgCircle from "./Circle";
-
-type Point = { x: number; y: number };
-
-function mapToSVG(points: Point[], width: number, height: number, scale: number): string {
-    return points
-      .map((point) =>`${width / 2 + point.x * scale},${height / 2 - point.y * scale}`)
-      .join(" ");
-  }
 
 type ParaboleGraphProps = {
     width: number

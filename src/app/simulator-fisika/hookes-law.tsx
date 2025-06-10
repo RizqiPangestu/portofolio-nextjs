@@ -6,79 +6,25 @@ import Wall from "../ui/simulator-fisika/components/wall";
 import {useEffect, useState } from "react";
 import BulkyArrow from "../ui/simulator-fisika/components/Arrow";
 
-type SpringSliderProps = {
-  setValue: (value: number) => void;
-  value: number 
-  minConst: number
-  maxConst: number
-}
-
-function SpringSlider({ value, setValue, minConst, maxConst }:SpringSliderProps){
-  const step = 10;
-  const minRulerValue = 1
-  const maxRulerValue = 10
-  // Generate tick values including min, max, and middle
-  const ticks = [minRulerValue, Math.floor((minRulerValue + maxRulerValue) / 2), maxRulerValue];
-
-  return <div className="bg-gray-300 w-[360px] lg:w-[360px] rounded-lg p-5 pt-1">
-      <p className="mb-1 text-sm lg:text-lg">Spring Constant: {value} N/m</p>
-      {/* Ruler container */}
-      <input 
-          type="range" 
-          min={minConst}
-          max={maxConst}
-          value={value} 
-          step={step}
-          onChange={(e) => setValue(Number(e.target.value))}
-          className="w-full"
-      />
-      <div className="relative h-2">
-          {/* Full ruler line */}
-          <div className="absolute top-3 left-0 right-0 h-0.5 bg-gray-700" />
-          {/* Tick marks */}
-          {Array.from({ length: maxRulerValue - minRulerValue + 1 }, (_, i) => {
-          const tickValue = minRulerValue + i;
-          const leftPercent = ((tickValue - minRulerValue) / (maxRulerValue - minRulerValue)) * 100;
-          const isMajorTick = ticks.includes(tickValue);
-          return (
-              <div
-                  key={tickValue}
-                  className={`absolute bottom-0 w-px bg-gray-700`}
-                  style={{
-                      height: isMajorTick ? '16px' : '8px',
-                      left: `${leftPercent}%`,
-                      transform: 'translateX(-50%)',
-                  }}
-                  >
-                  {isMajorTick && (
-                      <div className="absolute top-5 w-max text-xs text-gray-900 -translate-x-1/2">
-                      {Math.round(((tickValue-minRulerValue)/(maxRulerValue-minRulerValue) * (maxConst-minConst)) + minConst)}
-                      </div>
-                  )}
-              </div>
-          );
-          })}
-      </div>
-  </div>
-}
-
-type ForceSliderProps = {
+type SliderProps = {
   setValue: (value: number) => void;
   value: number
+  min: number
+  max: number
+  step: number
+  text: string
+  unit: string
+  toFixed?: number
 }
 
-function ForceSlider({ value, setValue }:ForceSliderProps){
-  const min = 0
-  const max = 100
-  const step = 5;
-
+function Slider({ value, setValue,min,max,step,text,unit, toFixed }:SliderProps){
   const minRulerValue = 0
   const maxRulerValue = 10
   // Generate tick values including min, max, and middle
   const ticks = [minRulerValue, Math.floor((minRulerValue + maxRulerValue) / 2), maxRulerValue];
 
   return <div className="bg-gray-300  w-[360px] lg:w-[360px] rounded-lg p-5 pt-1">
-      <p className="mb-1 text-sm lg:text-lg">Applied Force: {value} N</p>
+      <p className="mb-1 text-sm lg:text-lg">{text}: {toFixed==0?(value):(value.toFixed(toFixed))} {unit}</p>
       <div>
           <input 
           type="range" 
@@ -159,7 +105,7 @@ export default function HookesLaw({width,height,coils}:HookesLawProps){
               style={{ transform: `translateX(${width+40}px)`, width: `${width+40}px` }}>
               {(forceConstant != 0) ? (
                 <div className="" >
-                  <BulkyArrow direction="right" color="#0070f3" height={25} headWidth={20} shaftWidth={10} shaftLength={15+forceConstant}/>
+                  <BulkyArrow direction="right" color="#0070f3" height={25} headWidth={20} shaftWidth={10} shaftLength={distance*200}/>
                   <p className="text-sm">D = {distance.toFixed(3)} m</p>
                 </div>
               ):(
@@ -181,8 +127,22 @@ export default function HookesLaw({width,height,coils}:HookesLawProps){
     </div>
     
     <div className="flex flex-row gap-4 p-4">
-      <SpringSlider value={springConstant} setValue={setSpringConstant} minConst={100} maxConst={1000}></SpringSlider>
-      <ForceSlider value={forceConstant} setValue={setForceConstant}></ForceSlider>
+      <Slider 
+        value={springConstant} 
+        setValue={setSpringConstant} 
+        min={100}
+        max={1000} 
+        step={10} 
+        text="Spring Constant"
+        unit="N/m"/>
+      <Slider 
+        value={forceConstant} 
+        setValue={setForceConstant} 
+        min={0}
+        max={100} 
+        step={5} 
+        text="Applied Force"
+        unit="N"/>
     </div>
   </div>
 }
@@ -246,7 +206,7 @@ export function HookesLawParallel({width,height,coils}:HookesLawProps){
             style={{ transform: `translateX(${width+40}px)`, width: `${width+40}px` }}>
             {(forceConstant != 0) ? (
               <div className="" >
-                <BulkyArrow direction="right" color="#0070f3" height={25} headWidth={20} shaftWidth={10} shaftLength={15+forceConstant}/>
+                <BulkyArrow direction="right" color="#0070f3" height={25} headWidth={20} shaftWidth={10} shaftLength={distance*200}/>
                 <p className="text-sm">D = {distance.toFixed(3)} m</p>
               </div>
             ):(
@@ -269,10 +229,31 @@ export function HookesLawParallel({width,height,coils}:HookesLawProps){
   
   <div className="flex flex-row gap-4 p-4 items-center">
     <div className="flex flex-col gap-4">
-      <SpringSlider value={springConstant1} setValue={setSpringConstant1} minConst={200} maxConst={600}></SpringSlider>
-      <SpringSlider value={springConstant2} setValue={setSpringConstant2} minConst={200} maxConst={600}></SpringSlider>
+      <Slider 
+        value={springConstant1} 
+        setValue={setSpringConstant1} 
+        min={200}
+        max={600} 
+        step={10} 
+        text="Spring Constant"
+        unit="N/m"/>
+      <Slider 
+        value={springConstant2} 
+        setValue={setSpringConstant2} 
+        min={200}
+        max={600} 
+        step={10} 
+        text="Spring Constant"
+        unit="N/m"/>
     </div>
-    <ForceSlider value={forceConstant} setValue={setForceConstant}></ForceSlider>
+    <Slider 
+        value={forceConstant} 
+        setValue={setForceConstant} 
+        min={0}
+        max={100} 
+        step={5} 
+        text="Applied Force"
+        unit="N"/>
   </div>
 </div>
 }
@@ -315,7 +296,9 @@ export function HookesLawSeries({width,height,coils}:HookesLawProps){
           <div className="">
             <p className="text-center text-sm">F1 = {forceConstant} N</p>
             {(forceConstant != 0) && (
-              <BulkyArrow direction="left" color="#F070f3" height={25} headWidth={20} shaftWidth={10} shaftLength={15+forceConstant}/>
+              <div className="flex justify-end">
+                <BulkyArrow direction="left" color="#F070f3" height={25} headWidth={20} shaftWidth={10} shaftLength={15+forceConstant}/>
+              </div>
             )}
           </div>
           <div className="">
@@ -335,7 +318,7 @@ export function HookesLawSeries({width,height,coils}:HookesLawProps){
             style={{ transform: `translateX(${width+40}px)`, width: `${width+40}px` }}>
             {(forceConstant != 0) ? (
               <div className="" >
-                <BulkyArrow direction="right" color="#0070f3" height={25} headWidth={20} shaftWidth={10} shaftLength={15+forceConstant}/>
+                <BulkyArrow direction="right" color="#0070f3" height={25} headWidth={20} shaftWidth={10} shaftLength={distance*200+distance*200}/>
                 <p className="text-sm">D = {distance.toFixed(3)} m</p>
               </div>
             ):(
@@ -358,10 +341,109 @@ export function HookesLawSeries({width,height,coils}:HookesLawProps){
   
   <div className="flex flex-row gap-4 p-4 items-center">
     <div className="flex flex-col gap-4">
-      <SpringSlider value={springConstant1} setValue={setSpringConstant1} minConst={200} maxConst={600}></SpringSlider>
-      <SpringSlider value={springConstant2} setValue={setSpringConstant2} minConst={200} maxConst={600}></SpringSlider>
+      <Slider 
+        value={springConstant1} 
+        setValue={setSpringConstant1} 
+        min={200}
+        max={600} 
+        step={10} 
+        text="Spring Constant"
+        unit="N/m"/>
+      <Slider 
+        value={springConstant2} 
+        setValue={setSpringConstant2} 
+        min={200}
+        max={600} 
+        step={10} 
+        text="Spring Constant"
+        unit="N/m"/>
     </div>
-    <ForceSlider value={forceConstant} setValue={setForceConstant}></ForceSlider>
+    <Slider 
+        value={forceConstant} 
+        setValue={setForceConstant} 
+        min={0}
+        max={100} 
+        step={5} 
+        text="Applied Force"
+        unit="N"/>
+  </div>
+</div>
+}
+
+export function HookesLawEnergy({width,height,coils}:HookesLawProps){
+  const [springConstant,setSpringConstant] = useState<number>(200)
+  const [forceConstant,setForceConstant] = useState<number>(0)
+  const [distance,setDistance] = useState<number>(0)
+
+  useEffect(() => {
+    setForceConstant(springConstant * distance)
+  }, [distance, springConstant]);
+
+  return <div className="w-full relative">
+  <div className={`flex flex-row items-center relative`} style={{ height: `${2.5*height}px` }}> 
+    <div className="relative left-0 z-[1]">
+      <Wall height={height*2}></Wall>
+    </div>
+    <div className="flex flex-col h-full justify-center relative">
+      <div className="absolute top-0 right-0">
+        <div className="flex flex-col">
+          <p className="text-center text-sm">F = {forceConstant.toFixed(1)} N</p>
+          {(forceConstant != 0) && (
+            <div className="self-end">
+              <BulkyArrow direction="left" color="#007F00" height={25} headWidth={20} shaftWidth={10} shaftLength={15+forceConstant}/>
+            </div>
+          )}
+        </div>
+      </div>
+      <div className="flex flex-row w-full h-full items-center">
+        <SpringSVG width={width+(distance*200)} height={height} coils={coils} strokeColor="#0070f3" strokeWidth={springConstant / 100} />
+      </div>
+      <div className="absolute h-full"  style={{ width: `${width+40}px` }}>
+        <div className="flex flex-row items-center justify-end h-full w-full">
+          <div className="right-0 border-l-2 border-dashed h-3/5 border-green-500"></div>
+          <div className="absolute flex flex-col right-0 bottom-0" 
+            style={{ transform: `translateX(${width+40}px)`, width: `${width+40}px` }}>
+            {(forceConstant != 0) ? (
+              <div className="" >
+                <BulkyArrow direction="right" color="#0070f3" height={25} headWidth={20} shaftWidth={10} shaftLength={distance*200}/>
+                <p className="text-sm">D = {distance.toFixed(3)} m</p>
+              </div>
+            ):(
+              <p className="text text-sm">D = 0 m</p>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div className="flex flex-col h-full w-full justify-center relative">
+      <div className="absolute top-0">
+        <p className="text-center text-sm">F = {forceConstant.toFixed(1)} N</p>
+        {(forceConstant != 0) && (
+          <BulkyArrow direction="right" color="#0070f3" height={25} headWidth={20} shaftWidth={10} shaftLength={15+forceConstant}/>
+        )}
+      </div>
+      <PullArrowSVG height={height} translateX={forceConstant}></PullArrowSVG>
+    </div>
+  </div>
+  
+  <div className="flex flex-row gap-4 p-4">
+  <Slider 
+        value={springConstant} 
+        setValue={setSpringConstant} 
+        min={100}
+        max={400} 
+        step={10} 
+        text="Spring Constant"
+        unit="N/m"/>
+    <Slider 
+        value={distance} 
+        setValue={setDistance} 
+        min={0}
+        max={1} 
+        step={0.05} 
+        text="Displacement"
+        unit="m"
+        toFixed={3}/>
   </div>
 </div>
 }

@@ -1,4 +1,3 @@
-//rename file
 type WallProps = {
     height: number; // height in pixels
 };

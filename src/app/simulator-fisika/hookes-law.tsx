@@ -7,6 +7,7 @@ import BulkyArrow from "../ui/simulator-fisika/components/Arrow";
 import ParabolaGraph from "../ui/simulator-fisika/components/Parabola";
 import EnergyBar from "../ui/simulator-fisika/components/EnergyBar";
 import Wall from "../ui/simulator-fisika/components/Wall";
+import Plot from "../ui/simulator-fisika/components/Plot";
 
 type SliderProps = {
   setValue: (value: number) => void;
@@ -87,7 +88,7 @@ function VisualBoard({
   showEquilibrium,
   isEquilibriumChecked,
 }:VisualBoardProps){
-  return <div className="bg-gray-300  w-[240px] lg:w-[240px] rounded-lg p-3 px-5">
+  return <div className="bg-gray-300 w-[240px] h-min rounded-lg p-3 px-5">
     <div className="flex flex-col gap-2">
       <label className="flex gap-1">
         <input 
@@ -96,7 +97,7 @@ function VisualBoard({
           checked={isSpringForceChecked}
           onChange={(e) => {showSpringForce(e.target.checked)}}
         />
-        Spring Force
+        Gaya Reaksi Pegas
       </label>
       <label className="flex gap-1">
         <input 
@@ -105,7 +106,7 @@ function VisualBoard({
           checked={isAppliedForceChecked}
           onChange={(e) => {showAppliedForce(e.target.checked)}}
         />
-        Applied Force
+        Gaya Tarik
       </label>
       <label className="flex gap-1">
         <input 
@@ -114,7 +115,7 @@ function VisualBoard({
           checked={isDisplacementChecked}
           onChange={(e) => {showDisplacement(e.target.checked)}}
         />
-        Displacement
+        Perpindahan
       </label>
       <label className="flex gap-1">
         <input 
@@ -123,7 +124,7 @@ function VisualBoard({
           checked={isEquilibriumChecked}
           onChange={(e) => {showEquilibrium(e.target.checked)}}
         />
-        Equilibrium
+        Titik Tengah
       </label>
     </div>
   </div>
@@ -149,7 +150,7 @@ export default function HookesLaw({width,height,coils}:HookesLawProps){
       setDistance(forceConstant / springConstant);
     }, [forceConstant, springConstant]);
 
-    return <div className="w-full relative p-5">
+    return <div className="w-full h-full flex flex-row md:flex-wrap gap-4 p-5 items-center">
     <VisualBoard 
       showSpringForce={showSpringForce}
       isSpringForceChecked={isSpringForceChecked}
@@ -221,7 +222,7 @@ export default function HookesLaw({width,height,coils}:HookesLawProps){
         min={100}
         max={1000} 
         step={10} 
-        text="Spring Constant"
+        text="Konstanta Pegas"
         unit="N/m"/>
       <Slider 
         value={forceConstant} 
@@ -229,7 +230,7 @@ export default function HookesLaw({width,height,coils}:HookesLawProps){
         min={0}
         max={100} 
         step={5} 
-        text="Applied Force"
+        text="Gaya Tarik"
         unit="N"/>
     </div>
   </div>
@@ -255,7 +256,7 @@ export function HookesLawParallel({width,height,coils}:HookesLawProps){
     setSpringForce2(springConstant2*newDistance)
   }, [forceConstant, springConstant1, springConstant2]);
 
-  return <div className="w-full relative p-5">
+  return <div className="w-full h-full flex flex-row md:flex-wrap gap-4 p-5 items-center">
     <VisualBoard 
       showSpringForce={showSpringForce}
       isSpringForceChecked={isSpringForceChecked}
@@ -344,7 +345,7 @@ export function HookesLawParallel({width,height,coils}:HookesLawProps){
         min={200}
         max={600} 
         step={10} 
-        text="Spring Constant"
+        text="Konstanta Pegas"
         unit="N/m"/>
       <Slider 
         value={springConstant2} 
@@ -352,7 +353,7 @@ export function HookesLawParallel({width,height,coils}:HookesLawProps){
         min={200}
         max={600} 
         step={10} 
-        text="Spring Constant"
+        text="Konstanta Pegas"
         unit="N/m"/>
     </div>
     <Slider 
@@ -361,7 +362,7 @@ export function HookesLawParallel({width,height,coils}:HookesLawProps){
         min={0}
         max={100} 
         step={5} 
-        text="Applied Force"
+        text="Gaya Tarik"
         unit="N"/>
   </div>
 </div>
@@ -384,7 +385,7 @@ export function HookesLawSeries({width,height,coils}:HookesLawProps){
     setDistance(distance1+distance2);
   }, [forceConstant, springConstant1, springConstant2]);
 
-  return <div className="w-full relative p-5">
+  return <div className="w-full h-full flex flex-row md:flex-wrap gap-4 p-5 items-center">
   <VisualBoard 
     showSpringForce={showSpringForce}
     isSpringForceChecked={isSpringForceChecked}
@@ -480,7 +481,7 @@ export function HookesLawSeries({width,height,coils}:HookesLawProps){
         min={200}
         max={600} 
         step={10} 
-        text="Spring Constant"
+        text="Konstanta Pegas"
         unit="N/m"/>
       <Slider 
         value={springConstant2} 
@@ -488,7 +489,7 @@ export function HookesLawSeries({width,height,coils}:HookesLawProps){
         min={200}
         max={600} 
         step={10} 
-        text="Spring Constant"
+        text="Konstanta Pegas"
         unit="N/m"/>
     </div>
     <Slider 
@@ -497,7 +498,7 @@ export function HookesLawSeries({width,height,coils}:HookesLawProps){
         min={0}
         max={100} 
         step={5} 
-        text="Applied Force"
+        text="Gaya Tarik"
         unit="N"/>
   </div>
 </div>
@@ -519,7 +520,7 @@ export function HookesLawEnergy({width,height,coils}:HookesLawProps){
     setEnergyPotential(1/2 * springConstant * distance * distance)
   }, [distance, springConstant]);
 
-  return <div className="w-full h-full flex flex-col relative gap-4 p-5">
+  return <div className="w-full h-full flex flex-row md:flex-wrap gap-4 p-5 items-center">
     <VisualBoard 
       showSpringForce={showSpringForce}
       isSpringForceChecked={isSpringForceChecked}
@@ -530,22 +531,6 @@ export function HookesLawEnergy({width,height,coils}:HookesLawProps){
       showEquilibrium={showEquilibrium}
       isEquilibriumChecked={isEquilibriumChecked}
     ></VisualBoard>
-  <div className="flex flex-row">
-    <div className="absolute" style={{ height: `${width/2}px`, width: `${width/2}px`}}>
-      <EnergyBar barValue={energyPotential}></EnergyBar>
-    </div>
-    <div className="w-full">
-      <ParabolaGraph 
-      width={width} 
-      height={width} 
-      scale={10} 
-      a={springConstant/2000}
-      xBall={distance*10}
-      xBallValue={distance}
-      yBallValue={energyPotential}
-      />
-    </div>
-  </div>
   <div className="flex flex-col">
     <div className={`flex flex-row items-center relative`} style={{ height: `${2.5*height}px` }}> 
       <div className="relative left-0 z-[1]">
@@ -608,7 +593,7 @@ export function HookesLawEnergy({width,height,coils}:HookesLawProps){
           min={100}
           max={400} 
           step={10} 
-          text="Spring Constant"
+          text="Konstanta Pegas"
           unit="N/m"/>
       <Slider 
           value={distance} 
@@ -619,6 +604,33 @@ export function HookesLawEnergy({width,height,coils}:HookesLawProps){
           text="Displacement"
           unit="m"
           toFixed={3}/>
+    </div>
+  </div>
+  <div className="flex flex-row">
+    <div className="absolute" style={{ height: `${width/2}px`, width: `${width/2}px`}}>
+      <EnergyBar barValue={energyPotential}></EnergyBar>
+    </div>
+    <div className="w-min flex flex-col">
+      <h3 className="text-center">Energy Plot</h3>
+      <ParabolaGraph 
+      width={width} 
+      height={width} 
+      scale={10} 
+      a={springConstant/2000}
+      xBall={distance*10}
+      xBallValue={distance}
+      yBallValue={energyPotential}
+      />
+    </div>
+    <div className="w-min flex flex-col">
+      <h3 className="text-center">Force Plot</h3>
+      <Plot
+       width={width} 
+       height={width}
+       xValue={distance}
+       yValue={springConstant*distance}
+       gradien={springConstant/800}
+       />
     </div>
   </div>
 </div>

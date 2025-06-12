@@ -31,11 +31,11 @@ export default function ParabolaGraph({width,height,scale,a,xBall,xBallValue,yBa
             {/* X axis */}
             <polygon points={xArrow} fill="#d1d5db"/>
             <line x1={0} y1={midY} x2={width} y2={midY} stroke="#d1d5db" />
-            <text x={width+5} y={midY + 5} className="text-sm fill-gray-700">Displacement {xBallValue.toFixed(3)} (m)</text>
+            <text x={width+5} y={midY + 5} className="text-sm fill-gray-700">Perpindahan {xBallValue.toFixed(3)} (m)</text>
             {/* Y axis */}
             <polygon points={yArrow} fill="#d1d5db"/>
             <line x1={midX} y1={30} x2={midX} y2={midY} stroke="#d1d5db" />
-            <text x={midX - 60} y={20} className="text-sm fill-gray-700">Potential Energy {yBallValue.toFixed(2)} (J)</text>
+            <text x={midX - 60} y={20} className="text-sm fill-gray-700">Energi Potensial {yBallValue.toFixed(2)} (J)</text>
 
             {/* Ball axis */}
             <line x1={midX} y1={ballCy} x2={ballCx} y2={ballCy} stroke="#000000" strokeDasharray={5} />

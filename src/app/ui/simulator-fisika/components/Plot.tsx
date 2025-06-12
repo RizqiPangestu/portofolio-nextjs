@@ -29,11 +29,11 @@ export default function Plot({width,height,xValue, yValue,gradien,maxXValue,minX
             {/* X axis */}
             <polygon points={xArrow} fill="#d1d5db"/>
             <line x1={0} y1={midY} x2={width} y2={midY} stroke="#d1d5db" />
-            <text x={width+5} y={midY + 5} className="text-sm fill-gray-700">Displacement {xValue.toFixed(3)} (m)</text>
+            <text x={width+5} y={midY + 5} className="text-sm fill-gray-700">Perpindahan {xValue.toFixed(3)} (m)</text>
             {/* Y axis */}
             <polygon points={yArrow} fill="#d1d5db"/>
             <line x1={midX} y1={30} x2={midX} y2={height} stroke="#d1d5db" />
-            <text x={midX - 60} y={20} className="text-sm fill-gray-700">Applied Force {yValue.toFixed(2)} (J)</text>
+            <text x={midX - 60} y={20} className="text-sm fill-gray-700">Gaya Tarik {yValue.toFixed(2)} (J)</text>
             <line x1={0} y1={midY} x2={width} y2={midY} stroke="#d1d5db" />
             
             {/* Force axis */}

@@ -13,7 +13,7 @@ export default function EnergyBar({barValue}:EnergyBarProps){
                     transformOrigin: 'left top'
                 }}>
                 <div className="text-center">
-                    Potential Energy
+                    Energi Potensial
                 </div>
                 <BulkyArrow height={10} color="#000000" shaftWidth={1} shaftLength={185} headWidth={10} headLength={15}></BulkyArrow>
                 <div className="flex flex-row h-10  bg-cyan-300 rounded-lg"

@@ -9,17 +9,17 @@ export default function SimulatorFisika(){
     
     return <div className="flex flex-col gap-8 px-5">
         <div>
-            <h2 className="text-xl font-bold">I. Introduction</h2>
+            <h2 className="text-xl font-bold">I. Dasar</h2>
             <HookesLaw width={width} height={height} coils={springCoils}></HookesLaw>
             <HookesLaw width={width} height={height} coils={springCoils}></HookesLaw>
         </div>
         <div>
-            <h2 className="text-xl font-bold">II. System</h2>
+            <h2 className="text-xl font-bold">II. Sistem</h2>
             <HookesLawParallel width={width} height={height} coils={springCoils}></HookesLawParallel>
             <HookesLawSeries width={width} height={height} coils={springCoils}></HookesLawSeries>
         </div>
         <div>
-            <h2 className="text-xl font-bold">III. Energy</h2>
+            <h2 className="text-xl font-bold">III. Energi</h2>
             <HookesLawEnergy width={width} height={height} coils={springCoils}></HookesLawEnergy>
         </div>
     </div>

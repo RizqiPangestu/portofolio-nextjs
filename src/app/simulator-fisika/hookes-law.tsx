@@ -630,8 +630,6 @@ export function HookesLawEnergy({width,height,coils}:HookesLawProps){
        xValue={distance}
        yValue={springConstant*distance}
        gradien={springConstant/800}
-       maxXValue={1}
-       minXValue={0}
        />
     </div>
   </div>

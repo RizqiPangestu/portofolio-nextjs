@@ -6,12 +6,10 @@ type PlotProps = {
     xValue: number
     yValue: number
     gradien:number
-    maxXValue:number
-    minXValue:number
 }
 
 
-export default function Plot({width,height,xValue, yValue,gradien,maxXValue,minXValue}:PlotProps){
+export default function Plot({width,height,xValue, yValue,gradien}:PlotProps){
     const midX = width/2
     const midY = height/2
 

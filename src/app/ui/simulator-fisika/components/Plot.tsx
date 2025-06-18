@@ -1,3 +1,5 @@
+"use client"
+
 import SvgCircle from "./Circle"
 
 type PlotProps = {

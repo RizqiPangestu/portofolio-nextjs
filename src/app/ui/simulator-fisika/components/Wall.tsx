@@ -1,3 +1,5 @@
+"use client"
+
 type WallProps = {
     height: number; // height in pixels
 };

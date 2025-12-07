@@ -1,3 +1,5 @@
+"use client"
+
 import SimulatorFisika from "./simulator-fisika";
 
 export default function Page(){

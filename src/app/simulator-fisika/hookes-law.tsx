@@ -6,8 +6,8 @@ import {useEffect, useState } from "react";
 import BulkyArrow from "../ui/simulator-fisika/components/Arrow";
 import ParabolaGraph from "../ui/simulator-fisika/components/Parabola";
 import EnergyBar from "../ui/simulator-fisika/components/EnergyBar";
-import Wall from "../ui/simulator-fisika/components/Wall";
 import Plot from "../ui/simulator-fisika/components/Plot";
+import Wall from "../ui/simulator-fisika/components/Wall";
 
 type SliderProps = {
   setValue: (value: number) => void;
@@ -150,7 +150,7 @@ export default function HookesLaw({width,height,coils}:HookesLawProps){
       setDistance(forceConstant / springConstant);
     }, [forceConstant, springConstant]);
 
-    return <div className="w-full h-full flex flex-row md:flex-wrap gap-4 p-5 items-center">
+    return <div className="w-full h-full flex flex-col md:flex-wrap gap-4 p-5">
     <VisualBoard 
       showSpringForce={showSpringForce}
       isSpringForceChecked={isSpringForceChecked}
@@ -256,7 +256,7 @@ export function HookesLawParallel({width,height,coils}:HookesLawProps){
     setSpringForce2(springConstant2*newDistance)
   }, [forceConstant, springConstant1, springConstant2]);
 
-  return <div className="w-full h-full flex flex-row md:flex-wrap gap-4 p-5 items-center">
+  return <div className="w-full h-full flex flex-col md:flex-wrap gap-4 p-5">
     <VisualBoard 
       showSpringForce={showSpringForce}
       isSpringForceChecked={isSpringForceChecked}
@@ -385,7 +385,7 @@ export function HookesLawSeries({width,height,coils}:HookesLawProps){
     setDistance(distance1+distance2);
   }, [forceConstant, springConstant1, springConstant2]);
 
-  return <div className="w-full h-full flex flex-row md:flex-wrap gap-4 p-5 items-center">
+  return <div className="w-full h-full flex flex-col gap-4 p-5">
   <VisualBoard 
     showSpringForce={showSpringForce}
     isSpringForceChecked={isSpringForceChecked}
@@ -520,7 +520,7 @@ export function HookesLawEnergy({width,height,coils}:HookesLawProps){
     setEnergyPotential(1/2 * springConstant * distance * distance)
   }, [distance, springConstant]);
 
-  return <div className="w-full h-full flex flex-row md:flex-wrap gap-4 p-5 items-center">
+  return <div className="w-full h-full flex flex-col md:flex-wrap gap-4 p-5">
     <VisualBoard 
       showSpringForce={showSpringForce}
       isSpringForceChecked={isSpringForceChecked}

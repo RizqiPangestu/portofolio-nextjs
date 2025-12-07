@@ -1,3 +1,5 @@
+"use client"
+
 import BulkyArrow from "./Arrow";
 import SvgCircle from "./Circle";
 

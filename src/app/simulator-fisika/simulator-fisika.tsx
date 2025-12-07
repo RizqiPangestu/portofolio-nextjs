@@ -16,7 +16,7 @@ export default function SimulatorFisika(){
         <div>
             <h2 className="text-xl font-bold">II. Sistem</h2>
             <HookesLawParallel width={width} height={height} coils={springCoils}></HookesLawParallel>
-            <HookesLawSeries width={width} height={height} coils={springCoils}></HookesLawSeries>
+            <HookesLawSeries width={width*0.8} height={height} coils={springCoils*0.8}></HookesLawSeries>
         </div>
         <div>
             <h2 className="text-xl font-bold">III. Energi</h2>

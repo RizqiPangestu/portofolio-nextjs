@@ -17,8 +17,7 @@ const nextConfig: NextConfig = {
         pathname: '/wikipedia/commons/thumb/0/01/Apache_Kafka_logo.svg/**',
       }
      ]
-  },
-  output: 'export'
+  }
 };
 
 export default nextConfig;

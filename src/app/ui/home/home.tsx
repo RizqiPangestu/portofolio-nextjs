@@ -115,7 +115,7 @@ export function Skills(){
         {
             key: 4,
             title: "Apache Kafka",
-            path: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Apache_Kafka_logo.svg/308px-Apache_Kafka_logo.svg.png",
+            path: "/assets/images/kafka-logo-tall.png",
             alt: "kafka image",
             href: "https://kafka.apache.org/documentation/"
         },

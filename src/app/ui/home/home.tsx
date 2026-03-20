@@ -148,7 +148,7 @@ export function Skills(){
     ]
 
     const imageList = imageSpecList.map(i => {
-        return (
+        return ( 
             i.path != "" && i.href != "" &&
             <a key={i.key} 
             href={i.href}
@@ -158,7 +158,7 @@ export function Skills(){
                     title={i.title}
                     src={i.path}
                     alt={i.alt}
-                    fill
+                    fill={true}
                     className="object-contain"
                 />
             </a>

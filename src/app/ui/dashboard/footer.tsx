@@ -8,7 +8,7 @@ function GithubContact({link}:{link: string}){
                 src={"/assets/images/github-mark-white.svg"}
                 alt=""
                 className="object-contain"
-                fill
+                fill={true}
             />
         </div>
         <div className='text-sm md:text-lg'>Github</div>
@@ -36,7 +36,7 @@ function LinkedInContact({link}:{link: string}){
                 src={"/assets/images/InBug-White.png"}
                 alt=""
                 className="object-contain"
-                fill
+                fill={true}
             />
         </div>
         <div className='text-sm md:text-lg'>LinkedIn</div>

@@ -7,8 +7,8 @@ function GithubContact({link}:{link: string}){
             <Image
                 src={"/assets/images/github-mark-white.svg"}
                 alt=""
-                objectFit="contain"
-                fill={true}
+                className="object-contain"
+                fill
             />
         </div>
         <div className='text-sm md:text-lg'>Github</div>
@@ -21,7 +21,7 @@ function EmailContact(){
             <Image
                 src={"/assets/images/envelope.png"}
                 alt=""
-                objectFit="contain"
+                className="object-contain"
                 fill={true}
             />
         </div>
@@ -35,8 +35,8 @@ function LinkedInContact({link}:{link: string}){
             <Image
                 src={"/assets/images/InBug-White.png"}
                 alt=""
-                objectFit="contain"
-                fill={true}
+                className="object-contain"
+                fill
             />
         </div>
         <div className='text-sm md:text-lg'>LinkedIn</div>

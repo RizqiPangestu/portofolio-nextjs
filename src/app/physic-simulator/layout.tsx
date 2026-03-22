@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import "./simulator-fisika.css"
+import "./physic-simulator.css"
 
 export const metadata: Metadata = {
-    title: "Simulator Fisika",
+    title: "Physics Law Simulator",
     description: "",
 };
 
-export default function SimulatorFisikaLayout({
+export default function PhysicSimulatorLayout({
     children,
   }: Readonly<{
     children: React.ReactNode;

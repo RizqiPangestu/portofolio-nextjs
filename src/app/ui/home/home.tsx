@@ -5,7 +5,7 @@ import { excalibrawFont } from '../fonts/fonts'
 
 export function About(){
     return <div className="flex flex-col items-center text-center my-8">
-        <div className={`${excalibrawFont.className} text-3xl font-bold`}>
+        <div className={`${excalibrawFont.className} text-4xl font-bold`}>
             About Me
         </div>
         <div className="my-2">
@@ -17,40 +17,51 @@ export function About(){
 
 export function Experience(){
     return <div className="flex flex-col items-center my-8 w-full">
-        <div className={`${excalibrawFont.className} text-3xl font-bold`}>
+        <div className={`${excalibrawFont.className} text-4xl font-bold`}>
             Experience
         </div>
         <div className="flex flex-col items-start w-full my-4 text-base md:text-lg">
             <div className="w-full my-4">
-                <div className="flex flex-row gap-2">
-                    <div className="font-bold">Tiket.com</div>
-                    <div className="text-gray-500 font-bold">-</div>
-                    <div className="text-gray-500 font-bold">Jakarta, Indonesia</div>
+                <div className="flex flex-row gap-2 text-2xl font-bold">
+                    <div>Tiket.com</div> 
+                    <div className="text-gray-500">- Jakarta, Indonesia</div>
                 </div>
                 <div className="text-gray-500">Online Travel Agent (OTA) and lifestyle app</div>
                 <div>
-                <div className="flex flex-row justify-between w-full">
+                    <div className="flex flex-row justify-between w-full">
                         <div className="italic">Backend Engineer Internship</div>
                         <div className="text-right">Apr 2022 - Sep 2022</div>
                     </div>
                     <div className="flex flex-row justify-between w-full">
                         <div className="italic">Software Engineer I</div>
-                        <div className="text-right">Oct 2022 - Present</div>
+                        <div className="text-right">Oct 2022 - Aug 2025</div>
                     </div>
                 </div>
                 <ul className="pl-5 text-gray-400 list-disc marker:text-green-400 text-sm md:text-base">
-                    <li>Develop B2B backend service using Golang</li>
-                    <li>Using MongoDB, Redis, Kafka, GCP Pubsub, and Google Cloud Storage as tech stack</li>
-                    <li>Create scalable job worker using Google PubSub messaging system (~3k concurrent job/minute)</li>
-                    <li>Maintaining a scalable service that can handle high network traffic (~100k concurrent traffic/minute)</li>
-                    <li>Minimize network IO cost by eliminating unnecessary payload (best achievement: reduce network cost by 75% in one month)</li>
+                    <li>Develop B2B Affiliate hotel backend service using <b>Golang</b></li>
+                    <li>Using <b>MongoDB, Redis, Kafka, GCP Pubsub, and Google Cloud Storage</b> as tech stack</li>
+                    <li>Contribute on code architecture migration <b>from Layered Architecture to Hexagonal Architecture</b> </li>
+                    <li>Create scalable job worker using Google PubSub messaging system (<b>~3k concurrent job/minute</b>) and manage it’s <b>eventually consistency and idempotency</b></li>
+                    <li>Maintaining a scalable service that can handle high network traffic (<b>~120k concurrent traffic/minute</b>)</li>
+                    <li>Minimize network IO cost by reducing unnecessary payload (best achievement: <b>reduce network cost by 75%</b>)</li>
+                    <li>Restructuring data, implement a snapshot mechanism, and also optimize database query that  improve the latency (best achievement: <b>reduce latency by 98%, from 125ms to 2ms</b>)</li>
+                    <li>Restructuring data which <b>reducing the database storage by approximately 99%</b> (from 200 GB to just 2 GB)</li>
+                </ul>
+                <div>
+                    <div className="flex flex-row justify-between w-full">
+                        <div className="italic">Software Engineer II</div>
+                        <div className="text-right">Sep 2025 - Present</div>
+                    </div>
+                </div>
+                <ul className="pl-5 text-gray-400 list-disc marker:text-green-400 text-sm md:text-base">
+                    <li>Isolate the PDF engine from main service to <b>remove unnecessary resources</b> (we use chromium as PDF engine, that currently has memory leak issues. It cause the main service to have unnecessary memory resources)</li>
+                    <li>Contributing on multi currency implementation for B2B Affiliate hotels. Collaborate with Demand, Data, Refund, and Pricing team for integration. <b>Prevented foreign exchange potential loss by ~175 million IDR in one month, projected ~2 billion IDR annually</b></li>
                 </ul>
             </div>
             <div className="w-full my-4">
-                <div className="flex flex-row gap-2">
-                    <div className="font-bold">Bukit Vista</div>
-                    <div className="text-gray-500 font-bold">-</div>
-                    <div className="text-gray-500 font-bold">Bali, Indonesia</div>
+                <div className="flex flex-row gap-2 text-2xl font-bold">
+                    <div>Bukit Vista</div>
+                    <div className="text-gray-500">- Bali, Indonesia</div>
                 </div>
                 <div className="text-gray-500">Property management company in Bali and Yogyakarta</div>
                 <div>
@@ -72,7 +83,7 @@ export function Experience(){
 
 export function Education(){
     return <div className="flex flex-col items-center text-center my-8 w-full">
-        <div className={`${excalibrawFont.className} text-3xl font-bold`}>
+        <div className={`${excalibrawFont.className} text-4xl font-bold`}>
             Education
         </div>
         <div className="flex flex-col items-start w-full my-4 text-sm md:text-lg">
@@ -115,7 +126,7 @@ export function Skills(){
         {
             key: 4,
             title: "Apache Kafka",
-            path: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Apache_Kafka_logo.svg/308px-Apache_Kafka_logo.svg.png",
+            path: "/assets/images/kafka-logo-tall.png",
             alt: "kafka image",
             href: "https://kafka.apache.org/documentation/"
         },
@@ -136,7 +147,7 @@ export function Skills(){
     ]
 
     const imageList = imageSpecList.map(i => {
-        return (
+        return ( 
             i.path != "" && i.href != "" &&
             <a key={i.key} 
             href={i.href}
@@ -146,15 +157,15 @@ export function Skills(){
                     title={i.title}
                     src={i.path}
                     alt={i.alt}
-                    layout="fill"
-                    objectFit="contain"
+                    fill={true}
+                    className="object-contain"
                 />
             </a>
         )
     })
 
     return <div className="flex flex-col items-center text-center my-8 w-full">
-        <div className={`${excalibrawFont.className} text-3xl font-bold`}>
+        <div className={`${excalibrawFont.className} text-4xl font-bold`}>
             Skills
         </div>
         <div className="my-2">

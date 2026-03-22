@@ -1,13 +1,13 @@
 "use client"
 
-import PullArrowSVG from "../ui/simulator-fisika/components/PullArrowSVG";
-import SpringSVG from "../ui/simulator-fisika/components/SpringSVG";
+import PullArrowSVG from "../ui/physic-law/components/PullArrowSVG";
+import SpringSVG from "../ui/physic-law/components/SpringSVG";
 import {useEffect, useState } from "react";
-import BulkyArrow from "../ui/simulator-fisika/components/Arrow";
-import ParabolaGraph from "../ui/simulator-fisika/components/Parabola";
-import EnergyBar from "../ui/simulator-fisika/components/EnergyBar";
-import Plot from "../ui/simulator-fisika/components/Plot";
-import Wall from "../ui/simulator-fisika/components/Wall";
+import BulkyArrow from "../ui/physic-law/components/Arrow";
+import ParabolaGraph from "../ui/physic-law/components/Parabola";
+import EnergyBar from "../ui/physic-law/components/EnergyBar";
+import Plot from "../ui/physic-law/components/Plot";
+import Wall from "../ui/physic-law/components/Wall";
 
 type SliderProps = {
   setValue: (value: number) => void;
@@ -97,7 +97,7 @@ function VisualBoard({
           checked={isSpringForceChecked}
           onChange={(e) => {showSpringForce(e.target.checked)}}
         />
-        Gaya Reaksi Pegas
+        Sprint Force
       </label>
       <label className="flex gap-1">
         <input 
@@ -106,7 +106,7 @@ function VisualBoard({
           checked={isAppliedForceChecked}
           onChange={(e) => {showAppliedForce(e.target.checked)}}
         />
-        Gaya Tarik
+        Applied Force
       </label>
       <label className="flex gap-1">
         <input 
@@ -115,7 +115,7 @@ function VisualBoard({
           checked={isDisplacementChecked}
           onChange={(e) => {showDisplacement(e.target.checked)}}
         />
-        Perpindahan
+        Displacement
       </label>
       <label className="flex gap-1">
         <input 
@@ -124,7 +124,7 @@ function VisualBoard({
           checked={isEquilibriumChecked}
           onChange={(e) => {showEquilibrium(e.target.checked)}}
         />
-        Titik Tengah
+        Equilibrium
       </label>
     </div>
   </div>
@@ -222,7 +222,7 @@ export default function HookesLaw({width,height,coils}:HookesLawProps){
         min={100}
         max={1000} 
         step={10} 
-        text="Konstanta Pegas"
+        text="Spring Constant"
         unit="N/m"/>
       <Slider 
         value={forceConstant} 
@@ -230,7 +230,7 @@ export default function HookesLaw({width,height,coils}:HookesLawProps){
         min={0}
         max={100} 
         step={5} 
-        text="Gaya Tarik"
+        text="Applied Force"
         unit="N"/>
     </div>
   </div>
@@ -345,7 +345,7 @@ export function HookesLawParallel({width,height,coils}:HookesLawProps){
         min={200}
         max={600} 
         step={10} 
-        text="Konstanta Pegas"
+        text="Spring Constant"
         unit="N/m"/>
       <Slider 
         value={springConstant2} 
@@ -353,7 +353,7 @@ export function HookesLawParallel({width,height,coils}:HookesLawProps){
         min={200}
         max={600} 
         step={10} 
-        text="Konstanta Pegas"
+        text="Spring Constant"
         unit="N/m"/>
     </div>
     <Slider 
@@ -362,7 +362,7 @@ export function HookesLawParallel({width,height,coils}:HookesLawProps){
         min={0}
         max={100} 
         step={5} 
-        text="Gaya Tarik"
+        text="Applied Force"
         unit="N"/>
   </div>
 </div>
@@ -481,7 +481,7 @@ export function HookesLawSeries({width,height,coils}:HookesLawProps){
         min={200}
         max={600} 
         step={10} 
-        text="Konstanta Pegas"
+        text="Spring Constant"
         unit="N/m"/>
       <Slider 
         value={springConstant2} 
@@ -489,7 +489,7 @@ export function HookesLawSeries({width,height,coils}:HookesLawProps){
         min={200}
         max={600} 
         step={10} 
-        text="Konstanta Pegas"
+        text="Spring Constant"
         unit="N/m"/>
     </div>
     <Slider 
@@ -498,7 +498,7 @@ export function HookesLawSeries({width,height,coils}:HookesLawProps){
         min={0}
         max={100} 
         step={5} 
-        text="Gaya Tarik"
+        text="Applied Force"
         unit="N"/>
   </div>
 </div>
@@ -593,7 +593,7 @@ export function HookesLawEnergy({width,height,coils}:HookesLawProps){
           min={100}
           max={400} 
           step={10} 
-          text="Konstanta Pegas"
+          text="Spring Constant"
           unit="N/m"/>
       <Slider 
           value={distance} 

@@ -12,9 +12,15 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'upload.wikimedia.org',
+        hostname: 'webimages.mongodb.com',
         port: '',
-        pathname: '/wikipedia/commons/thumb/0/01/Apache_Kafka_logo.svg/**',
+        pathname: '/_com_assets/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'redis.io',
+        port: '',
+        pathname: '/wp-content/uploads/**',
       }
      ]
   }

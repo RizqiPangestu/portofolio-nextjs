@@ -28,6 +28,13 @@ const githubProjects: GithubProject[] = [
         description: "Tools to compare two text and highlighting the position of the different characters. Currently it supports for plain-text and key-value format",
         repoUrl: "https://github.com/RizqiPangestu/portofolio-nextjs",
         website: "https://rizqipangestu.com/text-compare"
+    },
+    {
+        id: 4,
+        title: "Physics Simulator",
+        description: "Simulator for Physics Laws, Currently only Hooke's Law is supported",
+        repoUrl: "https://github.com/RizqiPangestu/portofolio-nextjs",
+        website: "https://rizqipangestu.com/physic-simulator"
     }
 ];
 

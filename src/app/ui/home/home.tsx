@@ -1,7 +1,6 @@
 
 import Image from 'next/image'
 import { excalibrawFont } from '../fonts/fonts'
-import Layout from '@/app/home/layout'
 
 
 export function About(){

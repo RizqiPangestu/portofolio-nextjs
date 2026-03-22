@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint ."
   },
   "dependencies": {
     "fast-diff": "^1.3.0",
@@ -26,6 +26,7 @@
     "typescript": "^5"
   },
   "engines": {
-    "node": "20.x.x"
+    "node": "22.x",
+    "npm": "10.x"
   }
 }

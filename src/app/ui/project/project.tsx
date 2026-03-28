@@ -35,6 +35,13 @@ const githubProjects: GithubProject[] = [
         description: "Simulator for Physics Laws, Currently only Hooke's Law is supported",
         repoUrl: "https://github.com/RizqiPangestu/portofolio-nextjs",
         website: "https://rizqipangestu.com/physic-simulator"
+    },
+    {
+        id: 5,
+        title: "URL Shortener",
+        description: "URL Shortener service using Golang and PostgreSQL",
+        repoUrl: "https://github.com/RizqiPangestu/url_shortener",
+        website: "https://rizqipangestu.com/url-shortener"
     }
 ];
 

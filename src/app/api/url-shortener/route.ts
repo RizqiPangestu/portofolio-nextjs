@@ -18,12 +18,12 @@ function extractShortUrl(data: unknown): string | null {
 }
 
 export async function POST(request: Request) {
-  const serviceUrl = process.env.URL_SHORTENER_SERVICE_URL;
-  if (!serviceUrl?.trim()) {
+  const serviceHost = process.env.SHORTENER_SERVICE_HOST;
+  if (!serviceHost?.trim()) {
     return NextResponse.json(
       {
         error:
-          "Server misconfiguration: URL_SHORTENER_SERVICE_URL is not set.",
+          "Server misconfiguration: SHORTENER_SERVICE_HOST is not set.",
       },
       { status: 503 },
     );
@@ -67,7 +67,7 @@ export async function POST(request: Request) {
 
   let upstream: Response;
   try {
-    upstream = await fetch(serviceUrl.trim(), {
+    upstream = await fetch(serviceHost.trim()+"/shorten", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ url: parsed.toString() }),

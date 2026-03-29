@@ -27,7 +27,9 @@ function Slider({ value, setValue,min,max,step,text,unit, toFixed }:SliderProps)
   const ticks = [minRulerValue, Math.floor((minRulerValue + maxRulerValue) / 2), maxRulerValue];
 
   return <div className="bg-gray-300  w-[360px] lg:w-[360px] rounded-lg p-5 pt-1">
-      <p className="mb-1 text-sm lg:text-lg">{text}: {toFixed==0?(value):(value.toFixed(toFixed))} {unit}</p>
+      <p className="mb-1 text-sm lg:text-lg">
+        {text}: {toFixed === 0 ? value : value.toFixed(toFixed)} {unit}
+      </p>
       <div>
           <input 
           type="range" 
@@ -97,7 +99,7 @@ function VisualBoard({
           checked={isSpringForceChecked}
           onChange={(e) => {showSpringForce(e.target.checked)}}
         />
-        Sprint Force
+        Spring Force
       </label>
       <label className="flex gap-1">
         <input 
@@ -598,7 +600,7 @@ export function HookesLawEnergy({width,height,coils}:HookesLawProps){
       <Slider 
           value={distance} 
           setValue={setDistance} 
-          min={0}
+          min={-1}
           max={1} 
           step={0.05} 
           text="Displacement"
@@ -606,8 +608,8 @@ export function HookesLawEnergy({width,height,coils}:HookesLawProps){
           toFixed={3}/>
     </div>
   </div>
-  <div className="flex flex-row">
-    <div className="absolute" style={{ height: `${width/2}px`, width: `${width/2}px`}}>
+  <div className="flex flex-wrap">
+    <div className="" style={{ height: `${width/2}px`, width: `${width/2}px`}}>
       <EnergyBar barValue={energyPotential}></EnergyBar>
     </div>
     <div className="w-min flex flex-col">

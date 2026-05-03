@@ -10,6 +10,15 @@ interface SpringSVGProps {
   strokeWidth?: number;
 }
 
+/** Stable formatting for SSR/client hydration (avoids float string drift). */
+function svgNum(n: number): number {
+  return Math.round(n * 10_000) / 10_000;
+}
+
+function svgPoint(x: number, y: number): string {
+  return `${svgNum(x)},${svgNum(y)}`;
+}
+
 const SpringSVG: React.FC<SpringSVGProps> = ({
   width = 400,
   height = 80,
@@ -22,9 +31,9 @@ const SpringSVG: React.FC<SpringSVGProps> = ({
   const frequency = (2 * Math.PI * coils) / width;
 
   const startX = 0;
-  const startY = height / 2 + Math.sin(startX * frequency) * amplitude;
+  const startY = svgNum(height / 2 + Math.sin(startX * frequency) * amplitude);
   const endX = width;
-  const endY = height / 2 + Math.sin(endX * frequency) * amplitude;
+  const endY = svgNum(height / 2 + Math.sin(endX * frequency) * amplitude);
 
   const springElement: React.ReactElement[] = [];
   let color: string = "#007F00"
@@ -43,7 +52,7 @@ const SpringSVG: React.FC<SpringSVGProps> = ({
     }
     
     if (isFront && y>previousY){
-      points.push(`${x},${y}`);
+      points.push(svgPoint(x, y));
       frontSpringElements.push(<polyline
         key={x}
         fill="none"
@@ -54,10 +63,10 @@ const SpringSVG: React.FC<SpringSVGProps> = ({
         points={points.join(' ')}
         className='drop-shadow-[0px_0px_4px_#DDDDDD]'
       />)
-      points = [`${previousX},${previousY}`]
+      points = [svgPoint(previousX, previousY)]
       isFront = !isFront
     }else if (!isFront && y<=previousY){
-      points.push(`${x},${y}`);
+      points.push(svgPoint(x, y));
       backSpringElements.push(<polyline
         key={x}
         fill="none"
@@ -68,17 +77,17 @@ const SpringSVG: React.FC<SpringSVGProps> = ({
         points={points.join(' ')}
         className='drop-shadow-[0px_1px_2px_#666666]'
       />)
-      points = [`${previousX},${previousY}`]
+      points = [svgPoint(previousX, previousY)]
       isFront = !isFront
     }
 
-    points.push(`${x},${y}`);
+    points.push(svgPoint(x, y));
     previousY = y
     previousX = x
   }
 
   
-  const fixedEndY = height / 2; // fixed Y for the end point
+  const fixedEndY = svgNum(height / 2); // fixed Y for the end point
   
   // Adjust last point's Y coordinate
   points = points.map((point, index) => {

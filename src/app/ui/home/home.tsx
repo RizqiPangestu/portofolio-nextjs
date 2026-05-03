@@ -105,21 +105,21 @@ export function Skills(){
         {
             key: 1,
             title: "Golang",
-            path: "https://go.dev/blog/go-brand/Go-Logo/PNG/Go-Logo_Blue.png",
+            path: "/assets/images/Go-Logo_Blue.png",
             alt: "golang image",
             href: "https://go.dev/doc/"
         },
         {
             key: 2,
             title: "Mongodb",
-            path: "https://webimages.mongodb.com/_com_assets/cms/kuyjf3vea2hg34taa-horizontal_default_slate_blue.svg",
+            path: "/assets/images/mongodb.svg",
             alt: "mongodb image",
             href: "https://www.mongodb.com/docs/"
         },
         {
             key: 3,
             title: "Redis",
-            path: "https://redis.io/wp-content/uploads/2024/04/Logotype.svg?auto=webp&quality=85,75&width=120",
+            path: "/assets/images/redis.svg",
             alt: "redis image",
             href: "https://redis.io/docs/latest/"
         },

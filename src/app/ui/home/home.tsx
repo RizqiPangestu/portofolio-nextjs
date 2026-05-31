@@ -29,33 +29,39 @@ export function Experience(){
                 <div className="text-gray-500">Online Travel Agent (OTA) and lifestyle app</div>
                 <div>
                     <div className="flex flex-row justify-between w-full">
-                        <div className="italic">Backend Engineer Internship</div>
-                        <div className="text-right">Apr 2022 - Sep 2022</div>
+                        <div className="italic">Software Engineer II</div>
+                        <div className="text-right">Sep 2025 - Present</div>
                     </div>
+                </div>
+                <ul className="pl-5 text-gray-400 list-disc marker:text-green-400 text-sm md:text-base">
+                    <li><b>Saving ~1 million IDR per month</b> that caused by <b>memory leak</b> by isolating the PDF engine from main service using <b>Gotenberg</b> (Golang based)</li>
+                    <li><b>Prevent forex loss by ~175 million IDR in one month, projected to be ~2 billion IDR annually</b> by enabling multi currency for B2B Affiliate hotels, collaborate with Demand, Data, Refund, and Pricing team</li>
+                    <li><b>Contribute on API migration from XML into JSON contract</b> with improvement feature for maintainability and readability both for us and partner</li>
+                </ul>
+                <div>
                     <div className="flex flex-row justify-between w-full">
                         <div className="italic">Software Engineer I</div>
                         <div className="text-right">Oct 2022 - Aug 2025</div>
                     </div>
                 </div>
                 <ul className="pl-5 text-gray-400 list-disc marker:text-green-400 text-sm md:text-base">
-                    <li>Develop B2B Affiliate hotel backend service using <b>Golang</b></li>
-                    <li>Using <b>MongoDB, Redis, Kafka, GCP Pubsub, and Google Cloud Storage</b> as tech stack</li>
-                    <li>Contribute on code architecture migration <b>from Layered Architecture to Hexagonal Architecture</b> </li>
-                    <li>Create scalable job worker using Google PubSub messaging system (<b>~3k concurrent job/minute</b>) and manage it’s <b>eventually consistency and idempotency</b></li>
-                    <li>Maintaining a scalable service that can handle high network traffic (<b>~120k concurrent traffic/minute</b>)</li>
-                    <li>Minimize network IO cost by reducing unnecessary payload (best achievement: <b>reduce network cost by 75%</b>)</li>
-                    <li>Restructuring data, implement a snapshot mechanism, and also optimize database query that  improve the latency (best achievement: <b>reduce latency by 98%, from 125ms to 2ms</b>)</li>
-                    <li>Restructuring data which <b>reducing the database storage by approximately 99%</b> (from 200 GB to just 2 GB)</li>
+                    <li><b>Refactoring layered into hexagonal architecture</b> on <b>Golang</b> service</li>
+                    <li><b>Reducing network cost by 75% (or ~5 million per month)</b> by sanitizing unnecessary payload and <b>GCP Pubsub</b> encoding compression</li>
+                    <li><b>Reducing latency by 98%, (from 125ms to 2ms)</b> by optimizing MongoDB database index and caching</li>
+                    <li><b>Lead restructuring system design project</b> from blacklist into whitelist that <b>reducing the database storage by approximately 99% (from 200 GB to 2 GB)</b></li>
+                    <li><b>Enhancing user observability</b> by integrating our services into meaningful custom <b>Grafana</b> metrics</li>
+                    <li>Involved in library creation to <b>solving fan-out fan-in problem</b> which used for several product requirement using <b>MongoDB</b> and <b>GCP Pubsub</b></li>
+                    <li>Maintain a scalable discovery service with <b>~120k concurrent traffic/minute</b> (potentially growing along the year)</li>
                 </ul>
                 <div>
                     <div className="flex flex-row justify-between w-full">
-                        <div className="italic">Software Engineer II</div>
-                        <div className="text-right">Sep 2025 - Present</div>
+                        <div className="italic">Backend Engineer Internship</div>
+                        <div className="text-right">Apr 2022 - Sep 2022</div>
                     </div>
                 </div>
                 <ul className="pl-5 text-gray-400 list-disc marker:text-green-400 text-sm md:text-base">
-                    <li>Isolate the PDF engine from main service to <b>remove unnecessary resources</b> (we use chromium as PDF engine, that currently has memory leak issues. It cause the main service to have unnecessary memory resources)</li>
-                    <li>Contributing on multi currency implementation for B2B Affiliate hotels. Collaborate with Demand, Data, Refund, and Pricing team for integration. <b>Prevented foreign exchange potential loss by ~175 million IDR in one month, projected ~2 billion IDR annually</b></li>
+                    <li>Develop B2B Affiliate hotel backend service using <b>Golang</b></li>
+                    <li>Migrate legacy <b>Java</b> based service into <b>Golang</b></li>
                 </ul>
             </div>
             <div className="w-full my-4">
@@ -66,15 +72,13 @@ export function Experience(){
                 <div className="text-gray-500">Property management company in Bali and Yogyakarta</div>
                 <div>
                 <div className="flex flex-row justify-between w-full">
-                        <div className="italic">Backend Developer Internship</div>
+                        <div className="italic">Backend Engineer Internship</div>
                         <div className="text-right">Oct 2021 - Mar 2022</div>
                     </div>
                 </div>
                 <ul className="pl-5 text-gray-400 list-disc marker:text-green-400 text-sm md:text-base">
-                    <li>Create feature request from client using Node js</li>
-                    <li>Maintain the REST API from bug using Axios</li>
-                    <li>Structuring database to ORM models using Sequelize</li>
-                    <li>Create automation tools using Puppeteer</li>
+                    <li>Develop CRUD API using <b>Node.js</b> with framework <b>Axios</b> and <b>Sequalize</b></li>
+                    <li>Create automation scraping tools using <b>Puppeteer</b></li>
                 </ul>
             </div>
         </div>
@@ -93,7 +97,7 @@ export function Education(){
                     <div className="text-gray-500 font-bold">-</div>
                     <div className="text-gray-500 font-bold">Yogyakarta, Indonesia</div>
                 </div>
-                <div className="text-right">Oct 2021 - Mar 2022</div>
+                <div className="text-right">Aug 2018 - Aug 2022</div>
             </div>
             <div className="italic">Bachelor Degree in Computer Science, 3.69/4.00</div>
         </div>

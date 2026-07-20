@@ -5,7 +5,7 @@ type GithubProject = {
     id: number,
     title: string,
     description: string,
-    repoUrl: string,
+    repoUrl?: string,
     website?: string,
 }
 
@@ -14,7 +14,7 @@ const githubProjects: GithubProject[] = [
         id: 1,
         title: "Portfolio",
         description: "The project to create this portfolio page",
-        repoUrl: "https://github.com/RizqiPangestu/portofolio-nextjs",
+        website: "https://rizqipangestu.com"
     },
     {
         id: 2,
@@ -26,14 +26,12 @@ const githubProjects: GithubProject[] = [
         id: 3,
         title: "Text Compare",
         description: "Tools to compare two text and highlighting the position of the different characters. Currently it supports for plain-text and key-value format",
-        repoUrl: "https://github.com/RizqiPangestu/portofolio-nextjs",
         website: "https://rizqipangestu.com/text-compare"
     },
     {
         id: 4,
         title: "Physics Simulator",
         description: "Simulator for Physics Laws, Currently only Hooke's Law is supported",
-        repoUrl: "https://github.com/RizqiPangestu/portofolio-nextjs",
         website: "https://rizqipangestu.com/physic-simulator"
     },
     {
@@ -93,7 +91,7 @@ function Card({githubProjects}:{githubProjects: GithubProject[]}){
                     <Title title={project.title}></Title>
                     <Description description={project.description}></Description>
                     <div className="flex flex-row gap-4">
-                        <RepoUrl link={project.repoUrl}></RepoUrl>
+                        {project.repoUrl && <RepoUrl link={project.repoUrl}></RepoUrl>}
                         {project.website && <WebsiteUrl link={project.website}></WebsiteUrl>}
                     </div>
                 </div>

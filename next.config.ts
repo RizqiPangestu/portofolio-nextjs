@@ -21,6 +21,12 @@ const nextConfig: NextConfig = {
         hostname: 'redis.io',
         port: '',
         pathname: '/wp-content/uploads/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
+        port: '',
+        pathname: '/d/**',
       }
      ]
   }

@@ -56,6 +56,7 @@ COPY --chown=node:node package.json .
 COPY --chown=node:node --from=deps /usr/src/app/node_modules ./node_modules
 COPY --chown=node:node --from=build /usr/src/app/.next ./.next
 COPY --chown=node:node --from=build /usr/src/app/public ./public
+COPY --chown=node:node --from=build /usr/src/app/next.config.ts ./
 
 
 # Expose the port that the application listens on.

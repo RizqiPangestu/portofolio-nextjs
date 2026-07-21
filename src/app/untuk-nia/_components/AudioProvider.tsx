@@ -65,8 +65,15 @@ export default function AudioProvider({
     m.volume = audioConfig.volume;
 
     let cancelled = false;
-    let objectUrl: string | null = null;
     const controller = new AbortController();
+
+    // Point the element at the real URL (NOT a blob URL). iOS Safari can't
+    // reliably play blob-URL media — it needs a real resource that supports
+    // HTTP range requests — so a blob src plays on desktop but stays silent on
+    // iPhone. The streamed fetch below is only for the progress bar; it also
+    // warms the HTTP cache so this src loads instantly on tap.
+    m.src = audioConfig.src;
+    m.preload = "auto";
 
     // Download finished (or errored/timed out): stop the progress bar and ask
     // the user to tap. We do NOT auto-dismiss — the tap is the user gesture the
@@ -77,10 +84,9 @@ export default function AudioProvider({
       setPhase((p) => (p === "loading" ? "ready" : p));
     };
 
-    // Stream the file ourselves so we can report *byte-accurate* progress
-    // (the media element's `buffered` is time-based and buffers in bursts, so
-    // it makes for a poor progress signal). The fully-downloaded blob is then
-    // handed to the <audio> element, so playback starts instantly on tap.
+    // Stream the file to report *byte-accurate* progress (the media element's
+    // `buffered` is time-based and buffers in bursts, so it's a poor signal).
+    // We only count bytes — the element plays from the real URL above.
     const download = async () => {
       try {
         const res = await fetch(audioConfig.src, { signal: controller.signal });
@@ -88,32 +94,22 @@ export default function AudioProvider({
 
         const total = Number(res.headers.get("Content-Length")) || 0;
         const reader = res.body.getReader();
-        const chunks: Uint8Array[] = [];
         let received = 0;
 
         for (;;) {
           const { done, value } = await reader.read();
           if (done) break;
           if (value) {
-            chunks.push(value);
             received += value.length;
-            // Cap at 99% until the blob is actually attached; markReady sets 100.
+            // Cap at 99% until we flip to "ready"; markReady sets 100.
             if (total > 0 && !cancelled) {
               setProgress(Math.min(99, Math.round((received / total) * 100)));
             }
           }
         }
-
-        if (cancelled) return;
-        objectUrl = URL.createObjectURL(new Blob(chunks as BlobPart[]));
-        m.src = objectUrl;
-        m.load();
       } catch {
-        // Network/abort failure: fall back to letting the element load the URL
-        // directly so playback still works after the tap.
-        if (!cancelled) {
-          m.src = audioConfig.src;
-        }
+        // Network/abort failure is non-fatal: the element still has the real
+        // src and can load it on tap.
       } finally {
         markReady();
       }
@@ -128,7 +124,6 @@ export default function AudioProvider({
       cancelled = true;
       controller.abort();
       clearTimeout(timeout);
-      if (objectUrl) URL.revokeObjectURL(objectUrl);
     };
   }, []);
 
@@ -261,7 +256,7 @@ export default function AudioProvider({
                   </div>
                 </div>
               {phase === "loading" ? (
-                <p className="text-sm md:text-base font-medium tracking-widest text-pink-100/90"> Menyiapkan suasana… {progress}%</p>
+                <p className="text-sm md:text-base font-medium tracking-widest text-pink-100/90"> Tunggu yaa...</p>
               ) : (
                 <p className="animate-pulse text-sm md:text-base font-medium tracking-widest text-pink-100/90">Sentuh Layar</p>
               )}

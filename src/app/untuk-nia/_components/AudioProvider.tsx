@@ -64,53 +64,80 @@ export default function AudioProvider({
     m.loop = audioConfig.loop;
     m.volume = audioConfig.volume;
 
+    let cancelled = false;
+    let objectUrl: string | null = null;
+    const controller = new AbortController();
+
     // Download finished (or errored/timed out): stop the progress bar and ask
     // the user to tap. We do NOT auto-dismiss — the tap is the user gesture the
     // browser requires before audio can play with sound.
     const markReady = () => {
+      if (cancelled) return;
       setProgress(100);
       setPhase((p) => (p === "loading" ? "ready" : p));
     };
 
-    const updateProgress = () => {
+    // Stream the file ourselves so we can report *byte-accurate* progress
+    // (the media element's `buffered` is time-based and buffers in bursts, so
+    // it makes for a poor progress signal). The fully-downloaded blob is then
+    // handed to the <audio> element, so playback starts instantly on tap.
+    const download = async () => {
       try {
-        const { duration, buffered } = m;
-        if (duration > 0 && buffered.length > 0) {
-          const pct = Math.min(
-            100,
-            Math.round((buffered.end(buffered.length - 1) / duration) * 100),
-          );
-          setProgress((p) => (pct > p ? pct : p));
+        const res = await fetch(audioConfig.src, { signal: controller.signal });
+        if (!res.ok || !res.body) throw new Error(`HTTP ${res.status}`);
+
+        const total = Number(res.headers.get("Content-Length")) || 0;
+        const reader = res.body.getReader();
+        const chunks: Uint8Array[] = [];
+        let received = 0;
+
+        for (;;) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          if (value) {
+            chunks.push(value);
+            received += value.length;
+            // Cap at 99% until the blob is actually attached; markReady sets 100.
+            if (total > 0 && !cancelled) {
+              setProgress(Math.min(99, Math.round((received / total) * 100)));
+            }
+          }
         }
+
+        if (cancelled) return;
+        objectUrl = URL.createObjectURL(new Blob(chunks as BlobPart[]));
+        m.src = objectUrl;
+        m.load();
       } catch {
-        // `buffered` can throw before any range exists — ignore.
+        // Network/abort failure: fall back to letting the element load the URL
+        // directly so playback still works after the tap.
+        if (!cancelled) {
+          m.src = audioConfig.src;
+        }
+      } finally {
+        markReady();
       }
     };
 
-    const onProgress = () => updateProgress();
-    const onCanPlayThrough = () => markReady();
-    const onError = () => markReady();
+    void download();
 
-    m.addEventListener("progress", onProgress);
-    m.addEventListener("loadeddata", onProgress);
-    m.addEventListener("canplaythrough", onCanPlayThrough);
-    m.addEventListener("error", onError);
-
-    // Kick off the download now — after hydration — so it doesn't compete with
-    // the page's JS (which would delay interactivity). If the file was already
-    // buffered before listeners attached, jump straight to the tap prompt.
-    m.preload = "auto";
-    try {
-      m.load();
-    } catch {
-      // no-op
-    }
-    if (m.readyState >= 4 /* HAVE_ENOUGH_DATA */) markReady();
-
+    // Safety net: never leave the user stuck on the progress bar.
     const timeout = setTimeout(markReady, LOADING_TIMEOUT_MS);
 
-    // The tap (or key/touch) is the user gesture that unlocks audio playback
-    // with sound and dismisses the overlay.
+    return () => {
+      cancelled = true;
+      controller.abort();
+      clearTimeout(timeout);
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
+  }, []);
+
+  // Only listen for the unlock gesture once the track is ready. While the
+  // download is still in progress ("loading"), taps are ignored so the user
+  // can't dismiss the loader early.
+  useEffect(() => {
+    if (phase !== "ready") return;
+
     const unlock = () => {
       hasInteractedRef.current = true;
       setPhase("done");
@@ -122,22 +149,18 @@ export default function AudioProvider({
       }
       if (ee && !ee.paused) ee.muted = false;
     };
+
     const opts = { once: true, capture: true } as const;
     window.addEventListener("pointerdown", unlock, opts);
     window.addEventListener("keydown", unlock, opts);
     window.addEventListener("touchstart", unlock, opts);
 
     return () => {
-      clearTimeout(timeout);
-      m.removeEventListener("progress", onProgress);
-      m.removeEventListener("loadeddata", onProgress);
-      m.removeEventListener("canplaythrough", onCanPlayThrough);
-      m.removeEventListener("error", onError);
       window.removeEventListener("pointerdown", unlock, opts);
       window.removeEventListener("keydown", unlock, opts);
       window.removeEventListener("touchstart", unlock, opts);
     };
-  }, []);
+  }, [phase]);
 
   useEffect(() => {
     if (phase === "done") return;
@@ -192,7 +215,7 @@ export default function AudioProvider({
     <AudioCtx.Provider value={{ playEvent, stopEvent }}>
       {audioConfig.enabled && (
         <>
-          <audio ref={mainRef} src={audioConfig.src} preload="none" aria-hidden />
+          <audio ref={mainRef} preload="none" aria-hidden />
           <audio ref={eventRef} preload="none" aria-hidden />
           <div
             role="status"
@@ -208,9 +231,7 @@ export default function AudioProvider({
               </div>
 
               
-
-              {phase === "loading" ? (
-                <div className="flex w-64 max-w-[72vw] flex-col items-center gap-2.5">
+              <div className="flex w-64 max-w-[72vw] flex-col items-center gap-2.5">
                   <div className="flex items-end gap-2">
                     <span
                       className="nia-heart-bounce text-2xl"
@@ -232,17 +253,17 @@ export default function AudioProvider({
                     </span>
                   </div>
                   
-                  <div className="h-1.5 w-full overflow-hidden rounded-full bg-pink-200/20">
+                  <div className="h-1.5 w-full rounded-full bg-pink-200/20">
                     <div
                       className="h-full rounded-full bg-gradient-to-r from-pink-400 to-rose-400 transition-[width] duration-300 ease-out"
                       style={{ width: `${progress}%` }}
                     />
                   </div>
                 </div>
+              {phase === "loading" ? (
+                <p className="text-sm md:text-base font-medium tracking-widest text-pink-100/90"> Menyiapkan suasana… {progress}%</p>
               ) : (
-                <p className="animate-pulse text-sm md:text-base font-medium tracking-widest text-pink-100/90">
-                  sentuh layar
-                </p>
+                <p className="animate-pulse text-sm md:text-base font-medium tracking-widest text-pink-100/90">Sentuh Layar</p>
               )}
             </div>
           </div>

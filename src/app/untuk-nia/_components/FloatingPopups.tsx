@@ -740,11 +740,16 @@ function CelebrationView({
 // Quote feature
 // ═════════════════════════════════════════════════════════════════════════════
 
-function pickNextQuote(quotes: Quote[], seenIds: Set<string>): Quote | null {
+function pickNextQuote(
+  quotes: Quote[],
+  seenIds: Set<string>,
+): { quote: Quote; reset: boolean } | null {
   if (quotes.length === 0) return null;
   const unseen = quotes.find((q) => !seenIds.has(q.id));
-  if (unseen) return unseen;
-  return quotes[Math.floor(Math.random() * quotes.length)];
+  if (unseen) return { quote: unseen, reset: false };
+  // Everything has been seen: start the cycle over from the first quote and
+  // signal the caller to reset the seen set (no random pick).
+  return { quote: quotes[0], reset: true };
 }
 
 export function QuoteButton({
@@ -811,13 +816,15 @@ export function QuoteButton({
 
   function handleOpen() {
     const seen = readCookieIds(seenCookie);
-    const quote = pickNextQuote(availableQuotes, seen);
-    if (!quote) return;
-    const nextSeen = new Set(seen);
-    nextSeen.add(quote.id);
+    const pick = pickNextQuote(availableQuotes, seen);
+    if (!pick) return;
+    // On a restart, clear the seen set so we begin counting from the first
+    // quote again and keep finding the next unseen incrementally after that.
+    const nextSeen = new Set(pick.reset ? [] : seen);
+    nextSeen.add(pick.quote.id);
     setSeenIds(nextSeen);
     writeCookieIds(seenCookie, nextSeen, cookieMaxAgeS);
-    setCurrentQuote(quote);
+    setCurrentQuote(pick.quote);
     setOpen(true);
   }
 
@@ -890,11 +897,8 @@ function QuoteModalHeader({ onClose }: { onClose: () => void }) {
     <div className="shrink-0 flex items-center gap-3 px-5 md:px-6 py-4 border-b border-pink-300/10 bg-gradient-to-r from-pink-500/10 to-rose-500/10">
       <div className="flex-1 min-w-0">
         <h2 className="text-lg md:text-xl font-semibold text-pink-50 truncate">
-          Gombalan Buat Kamu
+          Pesan untuk kamu
         </h2>
-        <p className="text-xs md:text-sm text-pink-200/70">
-          Buka ulang untuk gombalan berikutnya ♥
-        </p>
       </div>
       <button
         type="button"

@@ -217,7 +217,7 @@ export default function AudioProvider({
             role="status"
             aria-live="polite"
             aria-label={phase === "ready" ? "Tap layar untuk mulai" : "Menyiapkan halaman"}
-            className={`fixed inset-0 z-[90] flex items-center justify-center bg-black/90 transition-opacity duration-500 ease-out ${
+            className={`fixed inset-0 z-[90] flex items-center justify-center bg-black transition-opacity duration-500 ease-out ${
               phase === "done" ? "opacity-0 pointer-events-none" : "opacity-100"
             }`}
           >

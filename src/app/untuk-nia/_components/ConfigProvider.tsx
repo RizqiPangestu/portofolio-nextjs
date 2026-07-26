@@ -7,7 +7,12 @@ import {
   useRef,
   useState,
 } from "react";
-import { DEFAULT_CONFIG, fetchConfig, type NiaConfig } from "../_data/config";
+import {
+  DEFAULT_CONFIG,
+  fetchConfig,
+  withConfigDefaults,
+  type NiaConfig,
+} from "../_data/config";
 
 // Config is read only on the client, so we cache it in localStorage instead of
 // a cookie: cookies are sent on every HTTP request (wasted bandwidth + a 4KB
@@ -85,7 +90,9 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
 
     const cached = readCache();
     if (cached) {
-      setConfig(cached.config);
+      // Merge over defaults so a cache from an older build (missing newer keys
+      // like `audio`) can't produce an undefined nested value.
+      setConfig(withConfigDefaults(cached.config));
       setReady(true);
       // Fresh cache → skip the network entirely.
       if (Date.now() - cached.savedAt < CACHE_TTL_MS) return;

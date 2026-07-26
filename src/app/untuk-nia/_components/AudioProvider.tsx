@@ -8,11 +8,11 @@ import {
   useRef,
   useState,
 } from "react";
-import { audioConfig } from "../_data/audio";
-import type { EventAudioConfig } from "../_data/events";
+import { audioSrcFrom, type AudioConfig } from "../_data/audio";
+import { useConfig } from "./ConfigProvider";
 
 type AudioContextValue = {
-  playEvent: (cfg: EventAudioConfig) => void;
+  playEvent: (cfg: AudioConfig) => void;
   stopEvent: () => void;
 };
 
@@ -45,24 +45,29 @@ export default function AudioProvider({
   const hasInteractedRef = useRef(false);
   const eventActiveRef = useRef(false);
 
+  // The track URL is configurable from the Google Sheet ("audio.src"); the rest
+  // of the audio behavior stays fixed in `audioConfig`. Wait for the config to
+  // resolve before downloading so we fetch the configured file, not the default.
+  const { config, ready } = useConfig();
+
   // `phase` drives the full-screen loader (see the `Phase` type above).
   // `progress` (0–100) animates the download bar.
-  const [phase, setPhase] = useState<Phase>(
-    audioConfig.enabled ? "loading" : "done",
-  );
+  const [phase, setPhase] = useState<Phase>("loading");
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    if (!audioConfig.enabled) {
-      setPhase("done");
-      return;
-    }
+    // Hold on the loader until the config (which carries the track URL) is
+    // resolved so we don't start downloading the wrong file.
+    if (!ready) return;
 
     const m = mainRef.current;
     if (!m) return;
 
-    m.loop = audioConfig.loop;
-    m.volume = audioConfig.volume;
+    const audio = audioSrcFrom(config.audio.src, 1);
+    const src = audio?.src?? "";
+
+    m.loop = audio?.loop?? true;
+    m.volume = audio?.volume?? 1;
 
     let cancelled = false;
     const controller = new AbortController();
@@ -72,7 +77,7 @@ export default function AudioProvider({
     // HTTP range requests — so a blob src plays on desktop but stays silent on
     // iPhone. The streamed fetch below is only for the progress bar; it also
     // warms the HTTP cache so this src loads instantly on tap.
-    m.src = audioConfig.src;
+    m.src = src;
     m.preload = "auto";
 
     // Download finished (or errored/timed out): stop the progress bar and ask
@@ -89,7 +94,7 @@ export default function AudioProvider({
     // We only count bytes — the element plays from the real URL above.
     const download = async () => {
       try {
-        const res = await fetch(audioConfig.src, { signal: controller.signal });
+        const res = await fetch(src, { signal: controller.signal });
         if (!res.ok || !res.body) throw new Error(`HTTP ${res.status}`);
 
         const total = Number(res.headers.get("Content-Length")) || 0;
@@ -125,7 +130,7 @@ export default function AudioProvider({
       controller.abort();
       clearTimeout(timeout);
     };
-  }, []);
+  }, [ready, config.audio.src]);
 
   // Only listen for the unlock gesture once the track is ready. While the
   // download is still in progress ("loading"), taps are ignored so the user
@@ -166,8 +171,7 @@ export default function AudioProvider({
     };
   }, [phase]);
 
-  const playEvent = useCallback((cfg: EventAudioConfig) => {
-    if (!audioConfig.enabled) return;
+  const playEvent = useCallback((cfg: AudioConfig) => {
     const m = mainRef.current;
     const e = eventRef.current;
     if (!e) return;
@@ -191,7 +195,6 @@ export default function AudioProvider({
   }, []);
 
   const stopEvent = useCallback(() => {
-    if (!audioConfig.enabled) return;
     const m = mainRef.current;
     const e = eventRef.current;
     eventActiveRef.current = false;
@@ -208,15 +211,13 @@ export default function AudioProvider({
 
   return (
     <AudioCtx.Provider value={{ playEvent, stopEvent }}>
-      {audioConfig.enabled && (
-        <>
           <audio ref={mainRef} preload="none" aria-hidden />
           <audio ref={eventRef} preload="none" aria-hidden />
           <div
             role="status"
             aria-live="polite"
             aria-label={phase === "ready" ? "Tap layar untuk mulai" : "Menyiapkan halaman"}
-            className={`fixed inset-0 z-[90] flex items-center justify-center bg-black/70 backdrop-blur-md transition-opacity duration-500 ease-out ${
+            className={`fixed inset-0 z-[90] flex items-center justify-center bg-black/90 transition-opacity duration-500 ease-out ${
               phase === "done" ? "opacity-0 pointer-events-none" : "opacity-100"
             }`}
           >
@@ -262,8 +263,6 @@ export default function AudioProvider({
               )}
             </div>
           </div>
-        </>
-      )}
       {children}
     </AudioCtx.Provider>
   );

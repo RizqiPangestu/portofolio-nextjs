@@ -19,6 +19,14 @@
 export const CONFIG_SHEET = "Config";
 
 export type NiaConfig = {
+  audio: {
+    /**
+     * Background track file name only (e.g. "main-sound.mp3"). The
+     * "/untuk-nia/audio/" prefix is added in code — see `resolveAudioSrc`.
+     * Override via the "audio.src" config row.
+     */
+    src: string;
+  };
   events: {
     defaultWindowMs: number;
     defaultViewMs: number;
@@ -41,6 +49,9 @@ export type NiaConfig = {
 };
 
 export const DEFAULT_CONFIG: NiaConfig = {
+  audio: {
+    src: "glenn-fredly-romansa-ke-masa-depan",
+  },
   events: {
     defaultWindowMs: 24 * 60 * 60 * 1000,
     defaultViewMs: 5000,
@@ -73,6 +84,32 @@ export const DEFAULT_CONFIG: NiaConfig = {
     },
   },
 };
+
+function isPlainObject(v: unknown): v is Record<string, unknown> {
+  return typeof v === "object" && v !== null && !Array.isArray(v);
+}
+
+/**
+ * Deep-merge an (possibly partial or stale) config over `DEFAULT_CONFIG`.
+ *
+ * Cached configs written by older builds may be missing keys that were added
+ * later (e.g. `audio`). Merging over the defaults guarantees every key exists,
+ * so consumers can safely read nested values like `config.audio.src` without a
+ * crash — cached values still win, defaults only fill the gaps.
+ */
+export function withConfigDefaults(value: unknown): NiaConfig {
+  const merge = (defaults: unknown, incoming: unknown): unknown => {
+    if (!isPlainObject(defaults) || !isPlainObject(incoming)) {
+      return incoming === undefined ? defaults : incoming;
+    }
+    const out: Record<string, unknown> = { ...incoming };
+    for (const key of Object.keys(defaults)) {
+      out[key] = merge(defaults[key], incoming[key]);
+    }
+    return out;
+  };
+  return merge(DEFAULT_CONFIG, value) as NiaConfig;
+}
 
 function parseValue(raw: string, type: string): unknown {
   const t = type.trim().toLowerCase();

@@ -15,16 +15,11 @@
  * `parsedImage` is the usable image URL.
  */
 
+import { audioSrcFrom, type AudioConfig } from "./audio";
 import { DEFAULT_CONFIG } from "./config";
 import type { DecorationLayer } from "./decorations";
 
 export type EventTrigger = string;
-
-export type EventAudioConfig = {
-  src: string;
-  volume?: number;
-  loop?: boolean;
-};
 
 /**
  * Per-event "shown before" cookie config.
@@ -76,7 +71,7 @@ export type Event = {
   windowMs?: number;
   items: EventObject[];
   decorations?: DecorationLayer[];
-  audio?: EventAudioConfig;
+  audio?: AudioConfig;
   cookie: EventCookieConfig;
 };
 
@@ -179,14 +174,6 @@ function cookieFromSeconds(raw: unknown): EventCookieConfig {
   const n = toNumber(raw);
   if (n == null || n <= 0) return { enabled: false, maxAgeS: 0 };
   return { enabled: true, maxAgeS: Math.floor(n) };
-}
-
-/** Build "/untuk-nia/audio/<file>" from a file name, appending .mp3 if needed. */
-function audioSrcFrom(raw: unknown, volume: number): EventAudioConfig | undefined {
-  const file = String(raw ?? "").trim();
-  if (!file) return undefined;
-  const fileName = /\.[a-z0-9]+$/i.test(file) ? file : `${file}.mp3`;
-  return { src: `/untuk-nia/audio/${fileName}`, volume, loop: true };
 }
 
 /** Zip a header row + data row into a `{ column: value }` record. */

@@ -128,9 +128,15 @@ export default function WishlistChecklist() {
   const totalDone = items.filter((i) => i.isChecked).length;
   const totalItems = items.length;
 
-  const existingCategories = useMemo(
-    () => Array.from(new Set(items.map((i) => i.category))).sort(),
-    [items],
+  const categoryOptions = useMemo(
+    () =>
+      Object.keys(config.wishlist.categoryEmoji).map((key) => ({
+        value: key,
+        label: `${categoryEmoji(key, config.wishlist.categoryEmoji)} ${
+          key.charAt(0).toUpperCase() + key.slice(1)
+        }`,
+      })),
+    [config.wishlist.categoryEmoji],
   );
 
   const grouped = useMemo(() => {
@@ -173,6 +179,17 @@ export default function WishlistChecklist() {
   function openAdd() {
     setFormError(null);
     setForm({ open: true, editingId: null, category: "", value: "" });
+  }
+
+  async function deleteItem(item: WishlistItem) {
+    const id = item.id;
+    setItems((prev) => prev.filter((i) => i.id !== id));
+    try {
+      await updateRow(id, { isArchived: "TRUE" });
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Gagal menghapus.");
+      setItems((prev) => (prev.some((i) => i.id === id) ? prev : [...prev, item]));
+    }
   }
 
   function openEdit(item: WishlistItem) {
@@ -220,7 +237,7 @@ export default function WishlistChecklist() {
             sheetName: WISHLIST_SHEET,
             action: "create",
             columnNames: WISHLIST_COLUMNS,
-            rows: [id, category, value, "FALSE", now, now],
+            rows: [id, category, value, "FALSE", "FALSE", now, now],
           }),
         });
         const json = await res.json();
@@ -380,10 +397,29 @@ export default function WishlistChecklist() {
                         <button
                           type="button"
                           onClick={() => openEdit(item)}
-                          aria-label={`Ubah: ${item.value}`}
-                          className="shrink-0 rounded-full px-2 py-1 text-xs text-pink-100/70 border border-pink-200/20 opacity-0 group-hover:opacity-100 focus:opacity-100 hover:bg-white/10 transition"
+                          aria-label={`Edit: ${item.value}`}
+                          className="shrink-0 rounded-full px-2 py-1 text-xs text-pink-100/70 border border-pink-200/20 hover:bg-white/10 transition"
                         >
-                          Ubah
+                          Edit
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => deleteItem(item)}
+                          aria-label={`Hapus: ${item.value}`}
+                          title="Hapus"
+                          className="shrink-0 flex items-center justify-center w-7 h-7 rounded-full text-red-200/80 border border-red-300/25 hover:bg-red-500/15 hover:text-red-100 transition"
+                        >
+                          <svg
+                            viewBox="0 0 24 24"
+                            className="w-3.5 h-3.5"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2.5"
+                            strokeLinecap="round"
+                            aria-hidden="true"
+                          >
+                            <path d="M6 6l12 12M18 6L6 18" />
+                          </svg>
                         </button>
                       </div>
                     </li>
@@ -399,7 +435,7 @@ export default function WishlistChecklist() {
       {form.open && (
         <WishlistForm
           form={form}
-          categories={existingCategories}
+          categoryOptions={categoryOptions}
           saving={saving}
           error={formError}
           onChange={setForm}
@@ -413,7 +449,7 @@ export default function WishlistChecklist() {
 
 function WishlistForm({
   form,
-  categories,
+  categoryOptions,
   saving,
   error,
   onChange,
@@ -421,18 +457,23 @@ function WishlistForm({
   onSubmit,
 }: {
   form: FormState;
-  categories: string[];
+  categoryOptions: { value: string; label: string }[];
   saving: boolean;
   error: string | null;
   onChange: (next: FormState) => void;
   onClose: () => void;
   onSubmit: (e: React.FormEvent) => void;
 }) {
+  // When editing an item whose stored category isn't in the predefined list,
+  // keep it selectable so the current value isn't silently dropped.
+  const showCurrent =
+    !!form.category &&
+    !categoryOptions.some((o) => o.value === form.category);
   return (
     <div
       role="dialog"
       aria-modal="true"
-      aria-label={form.editingId ? "Ubah wishlist" : "Tambah wishlist"}
+      aria-label={form.editingId ? "Edit wishlist" : "Tambah wishlist"}
       className="fixed inset-0 z-40 flex items-center justify-center px-4 py-8 bg-black/70 backdrop-blur-md nia-fade-in"
       onClick={onClose}
     >
@@ -442,7 +483,7 @@ function WishlistForm({
       >
         <div className="flex items-center justify-between gap-3 px-5 md:px-6 py-4 border-b border-pink-300/10 bg-gradient-to-r from-pink-500/10 to-rose-500/10">
           <h2 className="text-lg md:text-xl font-semibold text-pink-50">
-            {form.editingId ? "Ubah Wishlist" : "Tambah Wishlist"}
+            {form.editingId ? "Edit Wishlist" : "Tambah Wishlist"}
           </h2>
           <button
             type="button"
@@ -464,19 +505,33 @@ function WishlistForm({
             <span className="text-xs md:text-sm text-pink-200/80 font-medium">
               Kategori
             </span>
-            <input
+            <select
               value={form.category}
               onChange={(e) => onChange({ ...form, category: e.target.value })}
-              placeholder="Makan, Ngedate, …"
-              list="wishlist-categories"
-              className="w-full p-3 rounded-xl border border-pink-200/25 bg-white/5 text-pink-50 placeholder:text-pink-200/40 focus:outline-none focus:border-pink-300/60 focus:bg-white/10 transition"
+              className="w-full p-3 rounded-xl border border-pink-200/25 bg-white/5 text-pink-50 focus:outline-none focus:border-pink-300/60 focus:bg-white/10 transition"
               required
-            />
-            <datalist id="wishlist-categories">
-              {categories.map((c) => (
-                <option key={c} value={c} />
+            >
+              <option value="" disabled className="bg-rose-950 text-pink-50">
+                Pilih kategori…
+              </option>
+              {showCurrent && (
+                <option
+                  value={form.category}
+                  className="bg-rose-950 text-pink-50"
+                >
+                  {form.category}
+                </option>
+              )}
+              {categoryOptions.map((o) => (
+                <option
+                  key={o.value}
+                  value={o.value}
+                  className="bg-rose-950 text-pink-50"
+                >
+                  {o.label}
+                </option>
               ))}
-            </datalist>
+            </select>
           </label>
 
           <label className="flex flex-col gap-2">

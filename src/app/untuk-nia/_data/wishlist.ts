@@ -39,6 +39,7 @@ export const WISHLIST_COLUMNS = [
   "category",
   "value",
   "isChecked",
+  "isArchived",
   "createdDate",
   "updatedDate",
 ] as const;
@@ -71,7 +72,10 @@ export function normalizeWishlistItem(
   const r = raw as Record<string, unknown>;
   const id = typeof r.id === "string" ? r.id : String(r.id ?? "");
   const value = typeof r.value === "string" ? r.value : String(r.value ?? "");
+  
   if (!id || !value.trim()) return null;
+  if (toBool(r.isArchived)) return null;
+
   const category =
     typeof r.category === "string" && r.category.trim()
       ? r.category.trim()

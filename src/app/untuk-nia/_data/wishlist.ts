@@ -99,5 +99,5 @@ export function categoryEmoji(
   category: string,
   map: Record<string, string> = DEFAULT_CONFIG.wishlist.categoryEmoji,
 ): string {
-  return map[category.trim().toLowerCase()] ?? "💗";
+  return map[category.trim()] ?? "💗";
 }

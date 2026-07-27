@@ -508,10 +508,12 @@ function WishlistForm({
             <select
               value={form.category}
               onChange={(e) => onChange({ ...form, category: e.target.value })}
-              className="w-full p-3 rounded-xl border border-pink-200/25 bg-white/5 text-pink-50 focus:outline-none focus:border-pink-300/60 focus:bg-white/10 transition"
+              className={`w-full p-3 rounded-xl border border-pink-200/25 bg-white/5 focus:outline-none focus:border-pink-300/60 focus:bg-white/10 transition ${
+                form.category ? "text-pink-50" : "text-pink-200/40"
+              }`}
               required
             >
-              <option value="" disabled className="bg-rose-950 text-pink-50">
+              <option value="" disabled hidden className="bg-rose-950 text-pink-200/40">
                 Pilih kategori…
               </option>
               {showCurrent && (
@@ -541,7 +543,7 @@ function WishlistForm({
             <input
               value={form.value}
               onChange={(e) => onChange({ ...form, value: e.target.value })}
-              placeholder="mau ngapain / makan apa…"
+              placeholder="Isi wishlist..."
               className="w-full p-3 rounded-xl border border-pink-200/25 bg-white/5 text-pink-50 placeholder:text-pink-200/40 focus:outline-none focus:border-pink-300/60 focus:bg-white/10 transition"
               required
             />

@@ -69,7 +69,7 @@ export const DEFAULT_CONFIG: NiaConfig = {
   wishlist: {
     toggleDebounceMs: 500,
     defaultCategory: "Lainnya",
-    categoryEmoji: {"makan":"🍜","date":"🎡","travel":"🧳","nonton":"🎬"},
+    categoryEmoji: {}, 
   },
 };
 

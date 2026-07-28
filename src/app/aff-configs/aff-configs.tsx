@@ -11,6 +11,7 @@ import {
 } from "./types";
 
 const DEFAULT_URL = "http://localhost:8080";
+const PROXY_URL = "/api/aff-configs";
 
 const GET_SUFFIX = "/aff-configs";
 const MUTATION_SUFFIX = "/aff-config";
@@ -35,11 +36,12 @@ async function callApi(
   cookie: string,
   body?: unknown
 ): Promise<Response> {
-  return fetch(buildUrl(base, method), {
+  return fetch(PROXY_URL, {
     method,
     headers: {
       "Content-Type": "application/json",
-      Cookie: cookie,
+      "x-target-url": buildUrl(base, method),
+      "x-proxy-cookie": cookie,
     },
     body: body === undefined ? undefined : JSON.stringify(body),
   });
@@ -233,8 +235,9 @@ export default function AffConfigs() {
             Aff Configs Dashboard
           </h1>
           <p className="mt-2 max-w-2xl text-sm text-zinc-400">
-            View, create and delete configs. Requests run entirely in your client side
-            browser, so make sure your VPN is active before loading. Use API affiliate-gateway-internal to access it.
+            View, create and delete configs. Requests are proxied through this
+            app&apos;s server (avoiding CORS and mixed-content limits), so make
+            sure the machine running it has VPN access to the API.
           </p>
         </header>
 

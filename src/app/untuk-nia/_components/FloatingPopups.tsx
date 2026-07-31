@@ -14,6 +14,13 @@ import {
   type QuoteGroup,
   type TriggeredGroup,
 } from "../_data/popups";
+import {
+  fetchOneWish,
+  ONE_WISH_BUTTON_ICON,
+  ONE_WISH_WARNING,
+  saveOneWish,
+  type OneWish,
+} from "../_data/oneWish";
 import { DEFAULT_CONFIG } from "../_data/config";
 import { useConfig } from "./ConfigProvider";
 
@@ -935,6 +942,179 @@ function QuoteView({ quote }: { quote: Quote }) {
 }
 
 // ═════════════════════════════════════════════════════════════════════════════
+// One Wish Willow feature
+// ═════════════════════════════════════════════════════════════════════════════
+
+export function OneWishWillowButton() {
+  // Same hydration guard as the other buttons — the stored wish is fetched on
+  // the client, so render nothing until mounted.
+  const [mounted, setMounted] = useState(false);
+  const [wish, setWish] = useState<OneWish | null>(null);
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  useEffect(() => {
+    setMounted(true);
+    let cancelled = false;
+    (async () => {
+      try {
+        const existing = await fetchOneWish();
+        if (!cancelled) setWish(existing);
+      } catch {
+        // Silent: if the sheet can't be read we treat it as "no wish yet".
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [open]);
+
+  function handleOpen() {
+    setError(null);
+    setValue("");
+    setOpen(true);
+  }
+
+  function handleClose() {
+    if (saving) return;
+    setOpen(false);
+    setError(null);
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const trimmed = value.trim();
+    if (!trimmed || saving) return;
+    setSaving(true);
+    setError(null);
+    try {
+      const saved = await saveOneWish(trimmed);
+      setWish(saved);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Gagal menyimpan wish.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  if (!mounted) return null;
+
+  if (wish !== null) return <div />;
+
+  return (
+    <>
+      <div className="nia-heart-pulse">
+        <button
+          type="button"
+          onClick={handleOpen}
+          aria-label="Buka One Wish Willow"
+          className="relative flex items-center justify-center w-28 h-28 md:w-36 md:h-36 hover:scale-110 active:scale-95 transition-transform focus:outline-none"
+        >
+          <img
+            src={ONE_WISH_BUTTON_ICON}
+            alt=""
+            aria-hidden="true"
+            className="w-24 h-24 md:w-32 md:h-32 drop-shadow-md"
+          />
+        </button>
+      </div>
+
+      {open && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="One Wish Willow"
+          className="fixed inset-0 z-40 flex items-center justify-center px-4 py-8 bg-black/70 backdrop-blur-md nia-fade-in"
+          onClick={handleClose}
+        >
+          <div
+            className="relative w-full max-w-lg max-h-[85vh] rounded-3xl bg-gradient-to-br from-pink-900/80 to-rose-950/80 border border-pink-300/20 shadow-2xl shadow-pink-500/20 overflow-hidden flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="shrink-0 flex items-center gap-3 px-5 md:px-6 py-4 border-b border-pink-300/10 bg-gradient-to-r from-pink-500/10 to-rose-500/10">
+              <div className="flex-1 min-w-0">
+                <h2 className="text-lg md:text-xl font-semibold text-pink-50 truncate">
+                  One Wish Willow
+                </h2>
+              </div>
+              <button
+                type="button"
+                onClick={handleClose}
+                aria-label="Tutup"
+                className="flex items-center justify-center w-9 h-9 rounded-full text-pink-100 hover:bg-white/10 transition"
+              >
+                <img
+                  src="/untuk-nia/icons/close.svg"
+                  alt=""
+                  aria-hidden="true"
+                  className="w-5 h-5"
+                />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-5 md:p-6 nia-scroll nia-fade-in">
+              <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+                  <div className="flex flex-col items-start rounded-2xl border border-amber-300/30 bg-amber-400/10 px-4 py-3">
+                    <img
+                      src={ONE_WISH_BUTTON_ICON}
+                      alt=""
+                      aria-hidden="true"
+                      className="w-2/3 h-2/3 mx-auto shrink-0 drop-shadow"
+                    />
+                    <p className="text-sm md:text-base text-amber-100/90 leading-relaxed">
+                      {ONE_WISH_WARNING}
+                    </p>
+                  </div>
+
+                  <label className="flex flex-col gap-2">
+                    <span className="text-xs md:text-sm text-pink-200/80 font-medium">
+                      Tulis wish kamu
+                    </span>
+                    <textarea
+                      value={value}
+                      onChange={(e) => setValue(e.target.value)}
+                      rows={5}
+                      placeholder="Aku pengen…"
+                      disabled={saving}
+                      className="w-full p-3 rounded-xl border border-pink-200/25 bg-white/5 text-pink-50 placeholder:text-pink-200/40 focus:outline-none focus:border-pink-300/60 focus:bg-white/10 transition resize-none disabled:opacity-60"
+                    />
+                  </label>
+
+                  {error && <p className="text-sm text-red-300">{error}</p>}
+
+                  <button
+                    type="submit"
+                    disabled={saving || value.trim() === ""}
+                    className="self-center inline-flex items-center gap-2 px-6 py-3 rounded-full font-semibold text-white bg-gradient-to-r from-pink-400 to-rose-500 shadow-lg shadow-pink-500/30 hover:from-pink-300 hover:to-rose-400 active:scale-95 transition disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    <span>{saving ? "Menyimpan…" : "Submit Wish"}</span>
+                    <img
+                      src="/untuk-nia/icons/submit.svg"
+                      alt=""
+                      aria-hidden="true"
+                      className="w-4 h-4"
+                    />
+                  </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+// ═════════════════════════════════════════════════════════════════════════════
 // Default export: renders both floating popup features
 // ═════════════════════════════════════════════════════════════════════════════
 
@@ -983,6 +1163,7 @@ export default function FloatingPopups() {
         seenCookie={seenCookie}
         cookieMaxAgeS={cookieMaxAgeS}
       />
+      <OneWishWillowButton />
     </div>
   );
 }

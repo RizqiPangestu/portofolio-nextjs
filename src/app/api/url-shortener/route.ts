@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createUrlShortener } from "@/app/url-shortener/_lib/factory";
+import { getPublicOrigin } from "@/app/url-shortener/_lib/origin";
 
 export async function POST(request: Request) {
   let body: unknown;
@@ -38,7 +39,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const origin = new URL(request.url).origin;
+  const origin = getPublicOrigin(request);
   const shortener = createUrlShortener();
   const result = await shortener.shorten(parsed.toString(), { origin });
   if (!result.ok) {

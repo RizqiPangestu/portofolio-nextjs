@@ -1,21 +1,33 @@
 import diff from "fast-diff";
+import type { ReactNode } from "react";
 
-function highlightDiff(original: string, modified: string): React.ReactNode {
+function highlightDiff(
+    original: string,
+    modified: string,
+    highlightClass: string,
+): ReactNode {
     const result = diff(original, modified);
     return (
-        <span>
-        {result.map(([type, text], idx) => {
-            if (type === 0) return <span key={idx}>{text}</span>;
-            // if (type === 1) return <span key={idx} className="bg-green-200">{text}</span>;
-            if (type === -1) return <span key={idx} className="bg-red-700">{text}</span>;
-            return null;
-        })}
+        <span className="whitespace-pre">
+            {result.map(([type, text], idx) => {
+                if (type === 0) return <span key={idx}>{text}</span>;
+                if (type === -1) {
+                    return (
+                        <span key={idx} className={`whitespace-pre ${highlightClass}`}>
+                            {text}
+                        </span>
+                    );
+                }
+                return null;
+            })}
         </span>
     );
 }
 
-// For partial diff, we need to compare each line pair
-// and render the diff for each line
-export function renderDiffLine(line1: string, line2: string){
-    return highlightDiff(line1, line2);
-};
+export function renderDiffLine(
+    line1: string,
+    line2: string,
+    highlightClass = "bg-red-700",
+) {
+    return highlightDiff(line1, line2, highlightClass);
+}

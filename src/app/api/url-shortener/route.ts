@@ -1,34 +1,7 @@
 import { NextResponse } from "next/server";
-
-function extractShortUrl(data: unknown): string | null {
-  if (!data || typeof data !== "object") return null;
-  const o = data as Record<string, unknown>;
-  const top = [o.shortUrl, o.short_url, o.link, o.shortLink];
-  for (const c of top) {
-    if (typeof c === "string" && c.trim()) return c.trim();
-  }
-  const nested = o.data;
-  if (nested && typeof nested === "object") {
-    const d = nested as Record<string, unknown>;
-    for (const c of [d.shortUrl, d.short_url, d.link]) {
-      if (typeof c === "string" && c.trim()) return c.trim();
-    }
-  }
-  return null;
-}
+import { createUrlShortener } from "@/app/url-shortener/_lib/factory";
 
 export async function POST(request: Request) {
-  const serviceHost = process.env.SHORTENER_SERVICE_HOST;
-  if (!serviceHost?.trim()) {
-    return NextResponse.json(
-      {
-        error:
-          "Server misconfiguration: SHORTENER_SERVICE_HOST is not set.",
-      },
-      { status: 503 },
-    );
-  }
-
   let body: unknown;
   try {
     body = await request.json();
@@ -43,7 +16,7 @@ export async function POST(request: Request) {
   const url = (body as { url?: unknown }).url;
   if (typeof url !== "string" || !url.trim()) {
     return NextResponse.json(
-      { error: "Field \"url\" is required." },
+      { error: 'Field "url" is required.' },
       { status: 400 },
     );
   }
@@ -65,51 +38,12 @@ export async function POST(request: Request) {
     );
   }
 
-  let upstream: Response;
-  try {
-    upstream = await fetch(serviceHost.trim()+"/shorten", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ url: parsed.toString() }),
-    });
-  } catch {
-    return NextResponse.json(
-      { error: "Could not reach the URL shortener service." },
-      { status: 502 },
-    );
+  const origin = new URL(request.url).origin;
+  const shortener = createUrlShortener();
+  const result = await shortener.shorten(parsed.toString(), { origin });
+  if (!result.ok) {
+    return NextResponse.json({ error: result.error }, { status: result.status });
   }
 
-  const text = await upstream.text();
-  let json: unknown;
-  try {
-    json = text ? JSON.parse(text) : null;
-  } catch {
-    return NextResponse.json(
-      {
-        error: "Shortener service returned non-JSON.",
-        detail: text.slice(0, 200),
-      },
-      { status: 502 },
-    );
-  }
-
-  if (!upstream.ok) {
-    const message =
-      (json &&
-        typeof json === "object" &&
-        typeof (json as { error?: unknown }).error === "string" &&
-        (json as { error: string }).error) ||
-      `Shortener service error (${upstream.status}).`;
-    return NextResponse.json({ error: message }, { status: upstream.status });
-  }
-
-  const shortUrl = extractShortUrl(json);
-  if (!shortUrl) {
-    return NextResponse.json(
-      { error: "Shortener response did not include a short URL." },
-      { status: 502 },
-    );
-  }
-
-  return NextResponse.json({ short_url: shortUrl });
+  return NextResponse.json({ short_url: result.shortUrl });
 }

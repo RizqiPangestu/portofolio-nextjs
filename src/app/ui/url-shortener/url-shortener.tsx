@@ -1,8 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import type { UrlShortenerProviderName } from "@/app/url-shortener/_lib/types";
 
-export default function UrlShortener() {
+export default function UrlShortener({
+  provider,
+}: {
+  provider: UrlShortenerProviderName;
+}) {
   const [originalUrl, setOriginalUrl] = useState("");
   const [shortUrl, setShortUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -73,16 +78,18 @@ export default function UrlShortener() {
       </div>
 
       <div className="relative z-10 mx-auto flex min-h-screen max-w-lg flex-col items-center justify-center px-6 py-16">
-        <div className="mb-10 w-full text-center">
-          <p className="inline-flex max-w-md items-start gap-2 rounded-2xl border border-amber-500/25 bg-amber-500/10 px-4 py-3 text-left text-sm leading-relaxed text-amber-100/95 shadow-lg shadow-amber-900/20 ring-1 ring-amber-400/10">
-            <span className="mt-0.5 shrink-0 text-base" aria-hidden>
-              ⏱
-            </span>
-            <span>
-              This URL has TTL, will be refreshed everytime it used.
-            </span>
-          </p>
-        </div>
+        {provider === "http" && (
+          <div className="mb-10 w-full text-center">
+            <p className="inline-flex max-w-md items-start gap-2 rounded-2xl border border-amber-500/25 bg-amber-500/10 px-4 py-3 text-left text-sm leading-relaxed text-amber-100/95 shadow-lg shadow-amber-900/20 ring-1 ring-amber-400/10">
+              <span className="mt-0.5 shrink-0 text-base" aria-hidden>
+                ⏱
+              </span>
+              <span>
+                This URL has TTL, will be refreshed everytime it used.
+              </span>
+            </p>
+          </div>
+        )}
 
         <div className="w-full rounded-3xl border border-white/10 bg-zinc-900/55 p-8 shadow-2xl shadow-black/40 backdrop-blur-xl">
           <div className="mb-8 text-center">

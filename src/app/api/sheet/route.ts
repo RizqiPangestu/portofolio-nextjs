@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { readSheet, writeSheet } from "./client";
 
 // Always run this handler dynamically (no caching of user data).
 export const dynamic = "force-dynamic";
@@ -25,22 +26,6 @@ POST /api/sheet   (JSON body)
   → { ok: true }
 */
 
-function webAppUrl(): string | null {
-  const url = process.env.SHEET_WEBAPP_URL?.trim();
-  return url || null;
-}
-
-function sheetToken(): string {
-  return process.env.SHEET_TOKEN?.trim() ?? "";
-}
-
-function misconfig(): NextResponse {
-  return NextResponse.json(
-    { error: "Server misconfiguration: SHEET_WEBAPP_URL is not set." },
-    { status: 503 },
-  );
-}
-
 function badJson(): NextResponse {
   return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 });
 }
@@ -49,45 +34,12 @@ function isStringArray(v: unknown): v is string[] {
   return Array.isArray(v) && v.every((x) => typeof x === "string");
 }
 
-// Apps Script Web Apps only expose doGet/doPost, so create and update both go
-// through POST — the payload's `action` tells the script what to do.
-async function postToWebApp(
-  base: string,
-  payload: Record<string, unknown>,
-): Promise<NextResponse> {
-  let upstream: Response;
-  try {
-    upstream = await fetch(base, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...payload, token: sheetToken() }),
-    });
-  } catch {
-    return NextResponse.json(
-      { error: "Could not reach the Sheet service." },
-      { status: 502 },
-    );
-  }
-
-  const json = (await upstream.json().catch(() => null)) as
-    | { ok?: boolean; error?: string }
-    | null;
-
-  if (!json || json.error) {
-    return NextResponse.json(
-      { error: json?.error ?? "Sheet service rejected the request." },
-      { status: 502 },
-    );
-  }
-
-  return NextResponse.json({ ok: true });
+function sheetError(result: { error: string; status: number }): NextResponse {
+  return NextResponse.json({ error: result.error }, { status: result.status });
 }
 
 // READ
 export async function GET(request: Request) {
-  const base = webAppUrl();
-  if (!base) return misconfig();
-
   const { searchParams } = new URL(request.url);
   const sheetName = searchParams.get("sheetName")?.trim();
   if (!sheetName) {
@@ -98,49 +50,23 @@ export async function GET(request: Request) {
   }
 
   const queryColumn = searchParams.get("queryColumn")?.trim();
-  const queryValue = searchParams.get("queryValue");
+  const queryValue = searchParams.get("queryValue") ?? undefined;
 
-  const upstreamUrl = new URL(base);
-  upstreamUrl.searchParams.set("sheetName", sheetName);
-  if (queryColumn) {
-    upstreamUrl.searchParams.set("queryColumn", queryColumn);
-    upstreamUrl.searchParams.set("queryValue", queryValue ?? "");
-  }
-  const token = sheetToken();
-  if (token) upstreamUrl.searchParams.set("token", token);
-
-  let upstream: Response;
-  try {
-    upstream = await fetch(upstreamUrl.toString(), { cache: "no-store" });
-  } catch {
-    return NextResponse.json(
-      { error: "Could not reach the Sheet service." },
-      { status: 502 },
-    );
-  }
-
-  const json = (await upstream.json().catch(() => null)) as
-    | { columnNames?: string[]; rows?: string[][]; error?: string }
-    | null;
-
-  if (!json || json.error) {
-    return NextResponse.json(
-      { error: json?.error ?? "Sheet service returned an error." },
-      { status: 502 },
-    );
-  }
+  const result = await readSheet({
+    sheetName,
+    queryColumn: queryColumn || undefined,
+    queryValue,
+  });
+  if (!result.ok) return sheetError(result);
 
   return NextResponse.json({
-    columnNames: json.columnNames ?? [],
-    rows: json.rows ?? [],
+    columnNames: result.columnNames,
+    rows: result.rows,
   });
 }
 
 // CREATE / UPDATE
 export async function POST(request: Request) {
-  const base = webAppUrl();
-  if (!base) return misconfig();
-
   let body: unknown;
   try {
     body = await request.json();
@@ -197,15 +123,10 @@ export async function POST(request: Request) {
     );
   }
 
-  const payload: Record<string, unknown> = {
-    sheetName,
-    action: b.action,
-    columnNames: b.columnNames,
-    rows: b.rows,
-  };
-
+  let updateColumn: string | undefined;
+  let updateValue: string | undefined;
   if (b.action === "update") {
-    const updateColumn =
+    updateColumn =
       typeof b.updateColumn === "string" ? b.updateColumn.trim() : "";
     if (!updateColumn) {
       return NextResponse.json(
@@ -219,9 +140,18 @@ export async function POST(request: Request) {
         { status: 400 },
       );
     }
-    payload.updateColumn = updateColumn;
-    payload.updateValue = b.updateValue;
+    updateValue = b.updateValue;
   }
 
-  return postToWebApp(base, payload);
+  const result = await writeSheet({
+    sheetName,
+    action: b.action,
+    columnNames: b.columnNames,
+    rows: b.rows,
+    updateColumn,
+    updateValue,
+  });
+  if (!result.ok) return sheetError(result);
+
+  return NextResponse.json({ ok: true });
 }

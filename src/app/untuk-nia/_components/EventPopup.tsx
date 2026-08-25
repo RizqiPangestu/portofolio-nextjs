@@ -50,6 +50,28 @@ function resolveTriggerEpochMs(
   return t;
 }
 
+function findDueEvent(
+  events: Event[],
+  now: number,
+  baselineMs: number,
+  cookiePrefix: string,
+  defaultWindowMs: number,
+  fired: Set<string>,
+): Event | null {
+  for (const ev of events) {
+    if (fired.has(ev.id)) continue;
+    if (ev.cookie.enabled && hasEventCookie(ev.id, cookiePrefix)) {
+      fired.add(ev.id);
+      continue;
+    }
+    const triggerMs = resolveTriggerEpochMs(ev.triggerAt, baselineMs);
+    if (triggerMs == null) continue;
+    const windowMs = ev.windowMs ?? defaultWindowMs;
+    if (now >= triggerMs && now < triggerMs + windowMs) return ev;
+  }
+  return null;
+}
+
 export default function EventPopup({
   events: eventsProp,
 }: {
@@ -61,6 +83,7 @@ export default function EventPopup({
   const [events, setEvents] = useState<Event[]>(eventsProp ?? []);
   const { config, ready } = useConfig();
   const [activeEvent, setActiveEvent] = useState<Event | null>(null);
+  const [armed, setArmed] = useState(false);
   const { playEvent, stopEvent, phase } = useEventAudio();
 
   // Config comes from the shared provider (fetched once per session). Once it's
@@ -91,34 +114,36 @@ export default function EventPopup({
   }, [eventsProp, ready, config]);
 
   useEffect(() => {
-    // Relative triggers (`+5s`) count from tap-to-start, not from first paint,
-    // otherwise the window can expire behind the overlay and the event is skipped.
-    if (phase !== "done") return;
+    if (phase !== "done") {
+      setArmed(false);
+      return;
+    }
     if (pageLoadRef.current === 0) pageLoadRef.current = Date.now();
+    const timeoutId = setTimeout(() => setArmed(true), 1000);
+    return () => clearTimeout(timeoutId);
+  }, [phase]);
+
+  useEffect(() => {
+    if (!armed) return;
 
     function tick() {
       if (activeEvent) return;
-      const now = Date.now();
-      for (const ev of events) {
-        if (firedRef.current.has(ev.id)) continue;
-        if (ev.cookie.enabled && hasEventCookie(ev.id, config.events.sendCookiePrefix)) {
-          firedRef.current.add(ev.id);
-          continue;
-        }
-        const triggerMs = resolveTriggerEpochMs(ev.triggerAt, pageLoadRef.current);
-        if (triggerMs == null) continue;
-        const windowMs = ev.windowMs ?? config.events.defaultWindowMs;
-        if (now >= triggerMs && now < triggerMs + windowMs) {
-          firedRef.current.add(ev.id);
-          setActiveEvent(ev);
-          return;
-        }
-      }
+      const due = findDueEvent(
+        events,
+        Date.now(),
+        pageLoadRef.current,
+        config.events.sendCookiePrefix,
+        config.events.defaultWindowMs,
+        firedRef.current,
+      );
+      if (!due) return;
+      firedRef.current.add(due.id);
+      setActiveEvent(due);
     }
     tick();
     const id = setInterval(tick, 1000);
     return () => clearInterval(id);
-  }, [events, activeEvent, config, phase]);
+  }, [armed, events, activeEvent, config]);
 
   useEffect(() => {
     if (!activeEvent) return;

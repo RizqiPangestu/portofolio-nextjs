@@ -67,9 +67,9 @@ export default function UrlShortener({
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#0f1419] text-zinc-100">
+    <div className="relative min-h-dvh bg-[#0f1419] text-zinc-100">
       <div
-        className="pointer-events-none absolute inset-0 opacity-80"
+        className="pointer-events-none absolute inset-0 overflow-hidden opacity-80"
         aria-hidden
       >
         <div className="absolute -left-32 top-0 h-96 w-96 rounded-full bg-violet-600/30 blur-[100px]" />
@@ -77,7 +77,7 @@ export default function UrlShortener({
         <div className="absolute left-1/2 top-1/3 h-64 w-64 -translate-x-1/2 rounded-full bg-fuchsia-500/20 blur-[80px]" />
       </div>
 
-      <div className="relative z-10 mx-auto flex min-h-screen max-w-lg flex-col items-center justify-center px-6 py-16">
+      <div className="relative z-10 mx-auto flex min-h-dvh max-w-lg flex-col items-center justify-center px-6 py-16">
         {provider === "http" && (
           <div className="mb-10 w-full text-center">
             <p className="inline-flex max-w-md items-start gap-2 rounded-2xl border border-amber-500/25 bg-amber-500/10 px-4 py-3 text-left text-sm leading-relaxed text-amber-100/95 shadow-lg shadow-amber-900/20 ring-1 ring-amber-400/10">

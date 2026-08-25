@@ -77,7 +77,7 @@ export function KeyValueCompare({text1,text2,delimiter,ignoredPrefix}:KeyValuePr
 
   return {
     component: <>
-      <div className="w-1/2 border-1 overflow-x-auto whitespace-nowrap">
+      <div className="w-1/2 overflow-x-auto overflow-y-clip whitespace-nowrap border">
           {result.differentValues.map(({ key, left, right }) => (
               <div key={key} className="mb-1">
                   <span className="">{key}</span>=
@@ -91,7 +91,7 @@ export function KeyValueCompare({text1,text2,delimiter,ignoredPrefix}:KeyValuePr
           ))}
       </div>
 
-      <div className="w-1/2 border-1 overflow-x-auto whitespace-nowrap">
+      <div className="w-1/2 overflow-x-auto overflow-y-clip whitespace-nowrap border">
           {result.differentValues.map(({ key, left, right }) => (
               <div key={key} className="mb-1">
                   <span className="">{key}</span>=

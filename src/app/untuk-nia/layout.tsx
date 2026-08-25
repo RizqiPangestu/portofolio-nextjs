@@ -20,10 +20,10 @@ export default function UntukNiaLayout({
   return (
     <ConfigProvider>
       <AudioProvider>
-        <div className="relative min-h-screen flex flex-col overflow-x-hidden bg-[radial-gradient(ellipse_at_top,#3a0f2d_0%,#1a0712_40%,#08030a_100%)] text-pink-50">
+        <div className="relative min-h-dvh flex flex-col overflow-x-clip bg-[radial-gradient(ellipse_at_top,#3a0f2d_0%,#1a0712_40%,#08030a_100%)] text-pink-50">
           <Decorations />
           <Navbar />
-          <main className="relative z-10 flex-1 flex flex-col w-full">
+          <main className="relative z-10 w-full flex-1">
             {children}
           </main>
           <Footer />

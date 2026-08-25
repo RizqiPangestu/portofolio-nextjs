@@ -11,15 +11,20 @@ import {
 import { audioSrcFrom, type AudioConfig } from "../_data/audio";
 import { useConfig } from "./ConfigProvider";
 
+type AudioPhase = "loading" | "ready" | "done";
+
 type AudioContextValue = {
   playEvent: (cfg: AudioConfig) => void;
   stopEvent: () => void;
+  /** Current intro overlay phase. Event popups must wait until `"done"`. */
+  phase: AudioPhase;
 };
 
 const noop = () => {};
 const AudioCtx = createContext<AudioContextValue>({
   playEvent: noop,
   stopEvent: noop,
+  phase: "done",
 });
 
 export function useEventAudio(): AudioContextValue {
@@ -33,7 +38,7 @@ const LOADING_TIMEOUT_MS = 15000;
 // loading  → downloading the track (progress bar)
 // ready    → buffered enough; waiting for the user to tap (autoplay policy)
 // done     → user tapped; overlay dismissed and music playing
-type Phase = "loading" | "ready" | "done";
+type Phase = AudioPhase;
 
 export default function AudioProvider({
   children,
@@ -210,7 +215,7 @@ export default function AudioProvider({
   }, []);
 
   return (
-    <AudioCtx.Provider value={{ playEvent, stopEvent }}>
+    <AudioCtx.Provider value={{ playEvent, stopEvent, phase }}>
           <audio ref={mainRef} preload="none" aria-hidden />
           <audio ref={eventRef} preload="none" aria-hidden />
           <div

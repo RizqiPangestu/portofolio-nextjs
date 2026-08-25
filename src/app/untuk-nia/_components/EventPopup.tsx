@@ -55,13 +55,13 @@ export default function EventPopup({
 }: {
   events?: Event[];
 }) {
-  const pageLoadRef = useRef<number>(Date.now());
+  const pageLoadRef = useRef<number>(0);
   const firedRef = useRef<Set<string>>(new Set());
   const loadedRef = useRef(false);
   const [events, setEvents] = useState<Event[]>(eventsProp ?? []);
   const { config, ready } = useConfig();
   const [activeEvent, setActiveEvent] = useState<Event | null>(null);
-  const { playEvent, stopEvent } = useEventAudio();
+  const { playEvent, stopEvent, phase } = useEventAudio();
 
   // Config comes from the shared provider (fetched once per session). Once it's
   // resolved, load events from the Sheet using the config-driven defaults.
@@ -91,6 +91,11 @@ export default function EventPopup({
   }, [eventsProp, ready, config]);
 
   useEffect(() => {
+    // Relative triggers (`+5s`) count from tap-to-start, not from first paint,
+    // otherwise the window can expire behind the overlay and the event is skipped.
+    if (phase !== "done") return;
+    if (pageLoadRef.current === 0) pageLoadRef.current = Date.now();
+
     function tick() {
       if (activeEvent) return;
       const now = Date.now();
@@ -113,7 +118,7 @@ export default function EventPopup({
     tick();
     const id = setInterval(tick, 1000);
     return () => clearInterval(id);
-  }, [events, activeEvent, config]);
+  }, [events, activeEvent, config, phase]);
 
   useEffect(() => {
     if (!activeEvent) return;
@@ -125,12 +130,12 @@ export default function EventPopup({
   }, [activeEvent]);
 
   useEffect(() => {
-    if (!activeEvent?.audio) return;
+    if (phase !== "done" || !activeEvent?.audio) return;
     playEvent(activeEvent.audio);
     return () => stopEvent();
-  }, [activeEvent, playEvent, stopEvent]);
+  }, [activeEvent, playEvent, stopEvent, phase]);
 
-  if (!activeEvent) return null;
+  if (phase !== "done" || !activeEvent) return null;
 
   return (
     <div

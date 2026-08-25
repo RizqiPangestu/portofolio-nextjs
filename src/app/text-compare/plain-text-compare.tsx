@@ -153,7 +153,7 @@ function LineRow({
 
 function LeftPane({ rows, gutterCh }: { rows: AlignRow[]; gutterCh: number }) {
     return (
-        <div className="w-1/2 overflow-x-auto border font-mono text-sm leading-6">
+        <div className="w-1/2 overflow-x-auto overflow-y-clip border font-mono text-sm leading-6">
             {rows.map((row, i) => {
                 if (row.type === "equal") {
                     return (
@@ -202,7 +202,7 @@ function LeftPane({ rows, gutterCh }: { rows: AlignRow[]; gutterCh: number }) {
 
 function RightPane({ rows, gutterCh }: { rows: AlignRow[]; gutterCh: number }) {
     return (
-        <div className="w-1/2 overflow-x-auto border font-mono text-sm leading-6">
+        <div className="w-1/2 overflow-x-auto overflow-y-clip border font-mono text-sm leading-6">
             {rows.map((row, i) => {
                 if (row.type === "equal") {
                     return (

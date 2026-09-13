@@ -35,6 +35,44 @@ export function useEventAudio(): AudioContextValue {
 // this long so the user is never stuck on the progress bar.
 const LOADING_TIMEOUT_MS = 15000;
 
+// Tiny silent WAV so we can call play() on the event <audio> during the tap.
+// iOS/Android only unlock the element that actually played in that gesture;
+// a later play() on a never-started element is blocked.
+const SILENT_WAV =
+  "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA";
+
+function toAbsUrl(src: string): string {
+  if (typeof window === "undefined") return src;
+  try {
+    return new URL(src, window.location.href).href;
+  } catch {
+    return src;
+  }
+}
+
+function primeMediaElement(el: HTMLAudioElement) {
+  if (!el.getAttribute("src")) el.src = SILENT_WAV;
+  el.muted = true;
+  const play = el.play();
+  if (play && typeof play.then === "function") {
+    play
+      .then(() => {
+        el.pause();
+        try {
+          el.currentTime = 0;
+        } catch {
+          // no-op
+        }
+        el.muted = false;
+      })
+      .catch(() => {
+        el.muted = false;
+      });
+  } else {
+    el.muted = false;
+  }
+}
+
 // loading  → downloading the track (progress bar)
 // ready    → buffered enough; waiting for the user to tap (autoplay policy)
 // done     → user tapped; overlay dismissed and music playing
@@ -49,6 +87,10 @@ export default function AudioProvider({
   const eventRef = useRef<HTMLAudioElement | null>(null);
   const hasInteractedRef = useRef(false);
   const eventActiveRef = useRef(false);
+  const mainSrcRef = useRef("");
+  const mainVolumeRef = useRef(1);
+  const mainLoopRef = useRef(true);
+  const eventOnMainRef = useRef(false);
 
   // The track URL is configurable from the Google Sheet ("audio.src"); the rest
   // of the audio behavior stays fixed in `audioConfig`. Wait for the config to
@@ -73,6 +115,9 @@ export default function AudioProvider({
 
     m.loop = audio?.loop?? true;
     m.volume = audio?.volume?? 1;
+    mainSrcRef.current = src;
+    mainLoopRef.current = m.loop;
+    mainVolumeRef.current = m.volume;
 
     let cancelled = false;
     const controller = new AbortController();
@@ -152,7 +197,8 @@ export default function AudioProvider({
         mm.muted = false;
         if (mm.paused) mm.play().catch(() => {});
       }
-      if (ee && !ee.paused) ee.muted = false;
+      // Unlock the event element in this same tap so a play() 1s later is allowed.
+      if (ee) primeMediaElement(ee);
     };
 
     const opts = { once: true, capture: true } as const;
@@ -176,27 +222,60 @@ export default function AudioProvider({
     };
   }, [phase]);
 
+  const playOnElement = (
+    el: HTMLAudioElement,
+    cfg: AudioConfig,
+  ): Promise<void> => {
+    el.loop = cfg.loop ?? true;
+    el.volume = cfg.volume ?? 1;
+    el.muted = false;
+    if (el.src !== toAbsUrl(cfg.src)) el.src = cfg.src;
+    try {
+      el.currentTime = 0;
+    } catch {
+      // no-op
+    }
+    const play = el.play();
+    return play && typeof play.then === "function" ? play : Promise.resolve();
+  };
+
+  const restoreMainTrack = (m: HTMLAudioElement) => {
+    eventOnMainRef.current = false;
+    const src = mainSrcRef.current;
+    if (src && m.src !== toAbsUrl(src)) {
+      m.src = src;
+      m.loop = mainLoopRef.current;
+      m.volume = mainVolumeRef.current;
+    }
+    m.muted = false;
+    m.play().catch(() => {});
+  };
+
   const playEvent = useCallback((cfg: AudioConfig) => {
     const m = mainRef.current;
     const e = eventRef.current;
-    if (!e) return;
+    if (!e && !m) return;
 
     eventActiveRef.current = true;
     if (m) m.pause();
 
-    e.src = cfg.src;
-    e.loop = cfg.loop ?? true;
-    e.volume = cfg.volume ?? 1;
-    e.muted = !hasInteractedRef.current;
-    try {
-      e.currentTime = 0;
-    } catch {
-      // no-op
+    const fallbackToMain = () => {
+      if (!m) {
+        eventActiveRef.current = false;
+        return;
+      }
+      eventOnMainRef.current = true;
+      playOnElement(m, cfg).catch(() => {
+        eventActiveRef.current = false;
+      });
+    };
+
+    if (!e) {
+      fallbackToMain();
+      return;
     }
-    e.play().catch(() => {
-      eventActiveRef.current = false;
-      if (m) m.play().catch(() => {});
-    });
+
+    playOnElement(e, cfg).catch(fallbackToMain);
   }, []);
 
   const stopEvent = useCallback(() => {
@@ -206,18 +285,21 @@ export default function AudioProvider({
 
     if (e) {
       e.pause();
-      e.removeAttribute("src");
-      e.load();
+      try {
+        e.currentTime = 0;
+      } catch {
+        // no-op
+      }
+      // Keep a silent src instead of removeAttribute+load — that re-locks iOS.
+      if (e.src && e.src !== SILENT_WAV) e.src = SILENT_WAV;
     }
-    if (m) {
-      m.play().catch(() => {});
-    }
+    if (m) restoreMainTrack(m);
   }, []);
 
   return (
     <AudioCtx.Provider value={{ playEvent, stopEvent, phase }}>
-          <audio ref={mainRef} preload="none" aria-hidden />
-          <audio ref={eventRef} preload="none" aria-hidden />
+          <audio ref={mainRef} preload="auto" playsInline aria-hidden />
+          <audio ref={eventRef} preload="auto" playsInline aria-hidden />
           <div
             role="status"
             aria-live="polite"

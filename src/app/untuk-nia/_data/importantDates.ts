@@ -27,12 +27,22 @@ export const importantDates: ImportantDate[] = [
   },
   {
     title: "Aku Bawa ke Rumah",
-    description: "Pertama kali bawa kamu ke rumah, walaupun sebelumnya udh pernah ketemu ibu sama bapak, tapi yg ini sampe bikin demam siee, sampe harus minum panadol merah. Mana waktu itu dirumah kamu lagi ada bang Eras kak Shyfa lagi, aku jadinya ikutan senam jantung",
+    description: "Pertama kali bawa kamu ke rumah, walaupun sebelumnya udh pernah ketemu ibu sama bapak, tapi yg ini sampe bikin demam siee, sampe harus minum panadol merah. Mana waktu itu dirumah kamu lagi ada bang Eras kak Shyfa lagi, aku jadinya ikutan senam jantung.",
     date: "2026-03-28",
+  },
+  {
+    title: "Makan-makan Ultah Mama Nia",
+    description: "Makan-makan di Steak 21 Senopati, bareng bang Eras. Seru banget tempatnya ada mainan. Pulangnya baru tau kalo ka Shyfa sama ka Agnes bawel bgt jirr, pada kebelet nanyain kapan nikah, hadehhh.",
+    date: "2026-05-01",
   },
   {
     title: "Ke Bogor",
     description: "Jujur ini pertama kalinya aku nyetir paling jauh, ke bogor WKWKWKWK. Ketemu kak Shyfa sama bang Eras sebelum bang Eras balik kerja. Seru sih waktu itu, long road trip.",
     date: "2026-05-16",
   },
+  {
+    title: "Ketemu Bang Io",
+    description: "Bang Io lagi balik ke Jakarta, nyempetin ketemu di weekday. Aku pake kemeja baru dari kamu, orang kantor lgsg pada curiga jir. Bang Io ramah orangnya ya, walaupun tampilannya sangar.",
+    date: "2026-07-22",
+  }
 ];

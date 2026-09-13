@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // for testing only
+  // allowedDevOrigins: ["192.168.18.20"],
   images: {
      remotePatterns: [
       {
@@ -29,7 +30,7 @@ const nextConfig: NextConfig = {
         pathname: '/d/**',
       }
      ]
-  }
+  },
 };
 
 export default nextConfig;

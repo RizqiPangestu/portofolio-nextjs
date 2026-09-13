@@ -1,6 +1,7 @@
 import Clock from "./_components/Clock";
 import ElapsedTime from "./_components/ElapsedTime";
 import ImportantDates from "./_components/ImportantDates";
+import PhotoGallery from "./_components/PhotoGallery";
 import EventPopup from "./_components/EventPopup";
 import ScrollHint from "./_components/ScrollHint";
 
@@ -26,6 +27,10 @@ export default function UntukNiaPage() {
 
       <section className="relative z-10 flex w-full flex-col items-center justify-center px-4 pb-16 pt-6">
         <ImportantDates />
+      </section>
+
+      <section className="relative z-10 flex w-full flex-col items-center justify-center px-4 pb-16 pt-6">
+        <PhotoGallery />
       </section>
     </>
   );

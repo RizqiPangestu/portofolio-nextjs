@@ -1,6 +1,7 @@
 
 import Image from 'next/image'
 import { excalibrawFont } from '../fonts/fonts'
+import { publicAsset } from "../../_lib/assetPath";
 
 
 export function About(){
@@ -109,42 +110,42 @@ export function Skills(){
         {
             key: 1,
             title: "Golang",
-            path: "/assets/images/Go-Logo_Blue.png",
+            path: publicAsset("/assets/images/Go-Logo_Blue.png"),
             alt: "golang image",
             href: "https://go.dev/doc/"
         },
         {
             key: 2,
             title: "Mongodb",
-            path: "/assets/images/mongodb.svg",
+            path: publicAsset("/assets/images/mongodb.svg"),
             alt: "mongodb image",
             href: "https://www.mongodb.com/docs/"
         },
         {
             key: 3,
             title: "Redis",
-            path: "/assets/images/redis.svg",
+            path: publicAsset("/assets/images/redis.svg"),
             alt: "redis image",
             href: "https://redis.io/docs/latest/"
         },
         {
             key: 4,
             title: "Apache Kafka",
-            path: "/assets/images/kafka-logo-tall.png",
+            path: publicAsset("/assets/images/kafka-logo-tall.png"),
             alt: "kafka image",
             href: "https://kafka.apache.org/documentation/"
         },
         {
             key: 5,
             title: "Google Cloud Pubsub",
-            path: "/assets/images/google_cloud_pubsub_img.png",
+            path: publicAsset("/assets/images/google_cloud_pubsub_img.png"),
             alt: "kafka image",
             href: "https://cloud.google.com/pubsub/docs"
         },
         {
             key: 6,
             title: "Google Cloud Storage",
-            path: "/assets/images/google_cloud_storage_img.svg",
+            path: publicAsset("/assets/images/google_cloud_storage_img.svg"),
             alt: "kafka image",
             href: "https://cloud.google.com/storage/docs"
         },

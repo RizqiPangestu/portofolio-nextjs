@@ -19,6 +19,7 @@
 
 # production
 /build
+/github-pages-output/
 
 # misc
 .DS_Store

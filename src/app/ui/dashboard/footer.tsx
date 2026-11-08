@@ -1,11 +1,12 @@
 
 import Image from 'next/image'
+import { publicAsset } from "../../_lib/assetPath";
 
 function GithubContact({link}:{link: string}){
     return <a href={link} target="_blank" className='flex flex-row items-center justify-center gap-1'>
         <div className='w-4 h-4 md:w-8 md:h-8 relative'>
             <Image
-                src={"/assets/images/github-mark-white.svg"}
+                src={publicAsset("/assets/images/github-mark-white.svg")}
                 alt=""
                 className="object-contain"
                 fill={true}
@@ -19,7 +20,7 @@ function EmailContact(){
     return <a href="mailto:pangestu.rizqi.pr@gmail.com" target="_blank" className='flex flex-row items-center justify-center gap-1'>
         <div className='w-4 h-4 md:w-8 md:h-8 relative'>
             <Image
-                src={"/assets/images/envelope.png"}
+                src={publicAsset("/assets/images/envelope.png")}
                 alt=""
                 className="object-contain"
                 fill={true}
@@ -33,7 +34,7 @@ function LinkedInContact({link}:{link: string}){
     return <a href={link} target="_blank" className='flex flex-row items-center justify-center gap-1'>
         <div className='w-4 h-4 md:w-8 md:h-8 relative'>
             <Image
-                src={"/assets/images/InBug-White.png"}
+                src={publicAsset("/assets/images/InBug-White.png")}
                 alt=""
                 className="object-contain"
                 fill={true}

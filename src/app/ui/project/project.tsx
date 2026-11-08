@@ -1,5 +1,6 @@
 import { excalibrawFont } from "../fonts/fonts"
 import Image from 'next/image'
+import { publicAsset } from "../../_lib/assetPath";
 
 type GithubProject = {
     id: number,
@@ -61,7 +62,7 @@ function RepoUrl({link}:{link: string}){
     return <div>
         <a href={link} target="_blank">
             <Image
-                src={"/assets/images/github-mark-white.svg"}
+                src={publicAsset("/assets/images/github-mark-white.svg")}
                 alt=""
                 width={25}
                 height={25}
@@ -74,7 +75,7 @@ function WebsiteUrl({link}:{link: string}){
     return <div>
         <a href={link} target="_blank">
             <Image
-                src={"/assets/images/website.png"}
+                src={publicAsset("/assets/images/website.png")}
                 alt=""
                 width={25}
                 height={25}

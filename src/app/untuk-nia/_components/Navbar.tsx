@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 const links = [
   { href: "/untuk-nia", label: "Home" },
   { href: "/untuk-nia/wishlist", label: "Wishlist" },
+  { href: "/untuk-nia/wedding-preparation", label: "Wedding Prep" },
 ];
 
 export default function Navbar() {

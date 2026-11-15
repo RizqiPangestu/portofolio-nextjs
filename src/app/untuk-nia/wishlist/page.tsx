@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import WishlistChecklist from "../_components/WishlistChecklist";
 
 export const metadata: Metadata = {
-  title: "wishlist · untuk nia",
+  title: "Wishlist · Untuk nia",
 };
 
 export default function WishlistPage() {

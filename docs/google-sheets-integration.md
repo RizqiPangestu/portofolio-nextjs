@@ -95,6 +95,16 @@ The **client** owns all values here: it generates `id` (`crypto.randomUUID()`),
 sets `isChecked` as `"TRUE"`/`"FALSE"`, and stamps `createdDate`/`updatedDate`.
 Edits match on `updateColumn: "id"` and always bump `updatedDate`.
 
+The `/untuk-nia/wedding-preparation` page uses a separate `Wedding Preparation`
+tab with these columns: `id`, `value`, `deadlineDate`, `isChecked`,
+`isArchived`, `createdDate`, and `updatedDate`. Create the tab in the same
+spreadsheet before opening the page; the first added task seeds its header row
+if the tab is empty. For a tab that already has data, add a `deadlineDate`
+header beside `value` in the first row before using the deadline field. A
+deadline is required when adding or editing a task; older rows with an empty
+deadline remain visible and can be updated via Edit. Checklist tasks are
+archived rather than permanently deleted.
+
 ---
 
 ## Choosing an approach
